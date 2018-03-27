@@ -22,3 +22,12 @@ septa
 go build github.com/mchirico/septa/septa
 
 ```
+
+## Docker
+This is early development; but, you can test it with a docker image
+
+```bash
+docker pull docker.io/mchirico/septa
+docker run --rm -it mchirico/septa septa
+
+```
