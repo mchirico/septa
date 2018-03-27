@@ -1,14 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/mchirico/bugGoProject/septa_fixtures"
-	"reflect"
-	"net/http"
-	"log"
 	"io/ioutil"
-	"bytes"
+	"log"
+	"net/http"
+	"reflect"
 )
 
 func Parse(b []byte) string {
@@ -17,7 +16,6 @@ func Parse(b []byte) string {
 	if err := json.Unmarshal(b, &data0); err != nil {
 		panic(err)
 	}
-
 
 	var buffer bytes.Buffer
 	for key, value := range data0 {
@@ -34,9 +32,8 @@ func Parse(b []byte) string {
 				status := train["status"]
 
 				tmp_string := fmt.Sprintf("train: %s, depart: %s, status %s",
-					train_id,depart_time,status)
-				buffer.WriteString(tmp_string+"\n")
-
+					train_id, depart_time, status)
+				buffer.WriteString(tmp_string + "\n")
 
 			}
 		}
@@ -44,10 +41,8 @@ func Parse(b []byte) string {
 	return buffer.String()
 }
 
-
-
-func printStations(){
-	for _, k := range septa_fixtures.StationList() {
+func printStations() {
+	for _, k := range StationList() {
 		fmt.Println(reflect.TypeOf(k))
 		fmt.Println(k.Station)
 	}
@@ -74,4 +69,3 @@ func ListStations() {
 
 	fmt.Println(string(b))
 }
-
