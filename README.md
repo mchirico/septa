@@ -1,4 +1,6 @@
-# septa
+[![Build Status](https://travis-ci.org/mchirico/septa.svg?branch=develop)](https://travis-ci.org/mchirico/septa)
+
+# SEPTA
 Golang program for pulling SEPTA data
 
 # Install
