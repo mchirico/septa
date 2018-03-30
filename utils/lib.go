@@ -71,13 +71,13 @@ func ListStations() []string {
 	t_array := []string{}
 
 	s := string(b)
-	lines := strings.Split(s,"\n")
+	lines := strings.Split(s, "\n")
 	if len(lines) < 2 {
 		return t_array
 	}
 
-	for _,v := range lines[1:] {
-		v := strings.Split(v,",")
+	for _, v := range lines[1:] {
+		v := strings.Split(v, ",")
 		t_array = append(t_array, v[1])
 	}
 	//fmt.Println(string(b))
@@ -88,7 +88,6 @@ func ListStations() []string {
 func GetParseMap(
 	b []byte,
 	database []map[string]string) []map[string]string {
-
 
 	var data0 map[string]interface{}
 	if err := json.Unmarshal(b, &data0); err != nil {
@@ -132,7 +131,7 @@ func GetStationRecords(
 
 	var data0 map[string]interface{}
 	if err := json.Unmarshal(data, &data0); err != nil {
-		log.Printf("Bad data GetStationRecords: %s",string(data))
+		log.Printf("Bad data GetStationRecords: %s", string(data))
 		return nil
 	}
 	return GetParseMap(data, database)
