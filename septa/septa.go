@@ -7,7 +7,8 @@ import (
 
 func main() {
 
-	url := "https://www3.septa.org/hackathon/Arrivals/Suburban%20Station/25/"
+	url := "https://www3.septa.org/hackathon/" +
+		"Arrivals/Suburban%20Station/25/"
 	fmt.Println(septa.Parse(septa.GetData(url)))
 
 }
