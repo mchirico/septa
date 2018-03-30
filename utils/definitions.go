@@ -1,6 +1,31 @@
 package utils
 
+type TrainRun struct {
+	Direction   string `json:"direction"`
+	Path        string `json:"path"`
+	Train_id    string `json:"train_id"`
+	Origin      string `json:"origin"`
+	Destination string `json:"destination"`
+	Line        string `json:"line"`
+	Status      string `json:"status"`
+	Service_type string `json:"service_type"`
+	Next_station string `json:"next_station"`
+	Sched_time string `json:"sched_time"`
+	Depart_time string `json:"depart_time"`
+	Track string `json:"track"`
+	Track_change string `json:"track_change"`
+}
 
+
+type NorthRun struct {
+	Northbound []TrainRun `json:"Northbound"`
+
+}
+
+type SouthRun struct {
+	Southbound []TrainRun `json:"Southbound"`
+
+}
 
 type StationType struct {
 	Station_id int
