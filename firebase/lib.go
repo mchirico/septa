@@ -91,8 +91,8 @@ func deleteCollection(ctx context.Context, client *firestore.Client,
 	}
 }
 
-// DeleteStation -- simple delete test
-func DeleteStation(station string) {
+// DeleteDocument -- simple document delete
+func DeleteDocument(collection string, document string) {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
 	sa := option.WithCredentialsFile(file)
@@ -106,14 +106,14 @@ func DeleteStation(station string) {
 	}
 	defer client.Close()
 
-	_, err = client.Collection(station).Doc("*").Delete(ctx)
+	_, err = client.Collection(collection).Doc(document).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
 // AllDocuments -- returns all documents in the collection
-func AllDocuments(collection string) []map[string]interface{} {
+func AllDocuments(collection string, document string) []map[string]interface{} {
 
 	var database []map[string]interface{}
 
@@ -130,7 +130,6 @@ func AllDocuments(collection string) []map[string]interface{} {
 	}
 	defer client.Close()
 
-	fmt.Println("All Trains:")
 	iter := client.Collection(collection).Documents(ctx)
 	for {
 		doc, err := iter.Next()
@@ -141,7 +140,6 @@ func AllDocuments(collection string) []map[string]interface{} {
 			return database
 		}
 		database = append(database, doc.Data())
-		fmt.Println(doc.Data()["train_id"])
 	}
 	return database
 }
@@ -195,6 +193,46 @@ func AddStation(station string) {
 			fmt.Printf("error on insert collection")
 		}
 
+	}
+
+}
+
+// RefreshLiveView -- need to clean this up
+func RefreshLiveView() {
+	ctx := context.Background()
+	file, _ := clientSecretFile()
+	sa := option.WithCredentialsFile(file)
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer client.Close()
+
+	records := septa.GetLiveViewRecords()
+
+	oldRecords := AllDocuments("trainView", "TrainNo")
+	trainMap := map[string]int{}
+
+	for _, rec := range records {
+		_, err := client.Collection("trainView").Doc(rec.TrainNo).Set(ctx, rec)
+		trainMap[rec.TrainNo] = 1
+		if err != nil {
+			fmt.Printf("error on insert collection")
+		}
+
+	}
+
+	for _, v := range oldRecords {
+		trainNo := v["TrainNo"].(string)
+		if _, ok := trainMap[trainNo]; ok {
+
+		} else {
+			DeleteDocument("trainView", trainNo)
+		}
 	}
 
 }

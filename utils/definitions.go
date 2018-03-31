@@ -1,5 +1,15 @@
 package utils
 
+// LiveViewMessage - see https://play.golang.org/p/XxsmA8a7YPj
+type LiveViewMessage struct {
+	Lat, Lon, TrainNo,
+	Service, Dest, NextStop, Line,
+	Consist string
+	Late int
+	Source, Track,
+	TrackChange string
+}
+
 type trainRun struct {
 	Direction   string `json:"direction"`
 	Path        string `json:"path"`

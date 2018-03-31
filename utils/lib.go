@@ -17,7 +17,7 @@ func printStations() {
 	}
 }
 
-// GetData --  basic http GET
+// GetData --  basic http GET returning raw data
 func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
 	res, err := http.Get(url)
@@ -55,7 +55,7 @@ func ListStations() []string {
 
 }
 
-// GetParseMap -- this comment required
+// GetParseMap -- specific to station arrivals
 func GetParseMap(
 	b []byte,
 	database []map[string]string) []map[string]string {
@@ -105,5 +105,45 @@ func GetStationRecords(
 		return nil
 	}
 	return GetParseMap(data, database)
+
+}
+
+// ParseLiveView -- specific to live view
+//    Reference: https://play.golang.org/p/XxsmA8a7YPj
+func ParseLiveView(jsonStream []byte) []LiveViewMessage {
+
+	dec := json.NewDecoder(strings.NewReader(string(jsonStream)))
+
+	database := []LiveViewMessage{}
+
+	// read open bracket
+	_, err := dec.Token()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for dec.More() {
+		var m LiveViewMessage
+		err := dec.Decode(&m)
+		if err != nil {
+			log.Fatal(err)
+		}
+		database = append(database, m)
+	}
+
+	// read closing bracket
+	_, err = dec.Token()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return database
+}
+
+// GetLiveViewRecords -- gets live view
+func GetLiveViewRecords() []LiveViewMessage {
+
+	url := "http://www3.septa.org/hackathon/TrainView/"
+	jsonStream := GetData(url)
+	return ParseLiveView(jsonStream)
 
 }
