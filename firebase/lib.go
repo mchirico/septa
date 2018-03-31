@@ -13,16 +13,52 @@ import (
 	"strings"
 
 	"cloud.google.com/go/firestore"
+	"flag"
 	"fmt"
 	"google.golang.org/api/iterator"
 )
+
+// Version -- version of this program
+var Version = "0.0.1"
+
+// TokenDirAndFile -- use this for system router
+var TokenDirAndFile = ""
+
+// QueryTime -- seconds, used to update data
+var QueryTime = 20
+
+func help() {
+	os.Exit(1)
+}
+
+// Flags -- used in routerfirebase
+func Flags() {
+
+	helpVar := false
+	flag.BoolVar(&helpVar, "help", false, "help listing")
+	flag.IntVar(&QueryTime, "time", 20, "time in seconds")
+	flag.StringVar(&TokenDirAndFile, "token",
+		"",
+		"directory and file of token.json /stuff/token.json")
+	flag.Parse()
+
+	if helpVar {
+		help()
+	}
+
+}
 
 func clientSecretFile() (string, error) {
 	usr, err := user.Current()
 	if err != nil {
 		return "", err
 	}
+
 	tokenCacheDir := filepath.Join(usr.HomeDir, ".google_firebase")
+
+	if TokenDirAndFile != "" {
+		return TokenDirAndFile, nil
+	}
 
 	file := filepath.Join(tokenCacheDir,
 		url.QueryEscape("token.json"))
