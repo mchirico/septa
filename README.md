@@ -16,7 +16,7 @@ go get -u github.com/mchirico/septa/...
 
 
 
-# This will just list one station at this time.
+
 
 ```
 

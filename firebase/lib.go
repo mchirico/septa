@@ -27,6 +27,9 @@ var TokenDirAndFile = ""
 // QueryTime -- seconds, used to update data
 var QueryTime = 20
 
+// QuietMode -- router no output if true
+var QuietMode = false
+
 func help() {
 	os.Exit(1)
 }
@@ -36,10 +39,15 @@ func Flags() {
 
 	helpVar := false
 	flag.BoolVar(&helpVar, "help", false, "help listing")
+
+	flag.BoolVar(&QuietMode, "quiet", false, "set to true"+
+		" for no quiet output:  ./routefirebase -quiet=true")
+
 	flag.IntVar(&QueryTime, "time", 20, "time in seconds")
 	flag.StringVar(&TokenDirAndFile, "token",
 		"",
-		"directory and file of token.json /stuff/token.json")
+		"directory and file of token.json\n"+
+			"   ./routefirebase -token='/stuff/token.json'")
 	flag.Parse()
 
 	if helpVar {
@@ -231,7 +239,10 @@ func AddStation(station string) {
 
 	for _, rec := range records {
 		_, err := client.Collection("trains").Doc(rec["train_id"]).Set(ctx, rec)
-		fmt.Printf("Train updated: %s\n", rec["train_id"])
+		if QuietMode == false {
+			fmt.Printf("Train updated: %s\n", rec["train_id"])
+		}
+
 		if err != nil {
 			fmt.Printf("error on insert collection")
 		}
