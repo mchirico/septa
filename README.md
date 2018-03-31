@@ -8,7 +8,10 @@ Golang program for pulling SEPTA data
 # Install
 ```bash
 
+# install:
 
+go get github.com/stretchr/testify/assert
+go get firebase.google.com/go
 go get -u github.com/mchirico/septa/...
 
 # To run it. This will create a token, if you don't have one.
