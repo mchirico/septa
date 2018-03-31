@@ -1,8 +1,8 @@
 package main
 
 import (
-	septa "github.com/mchirico/septa/utils"
 	"fmt"
+	septa "github.com/mchirico/septa/utils"
 )
 
 func main() {

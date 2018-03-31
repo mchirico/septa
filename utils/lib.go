@@ -1,13 +1,13 @@
 package utils
 
 import (
-	"fmt"
-	"reflect"
-	"net/http"
-	"log"
-	"io/ioutil"
-	"strings"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"reflect"
+	"strings"
 )
 
 func printStations() {
@@ -16,7 +16,6 @@ func printStations() {
 		fmt.Println(k.Station)
 	}
 }
-
 
 // GetData --  basic http GET
 func GetData(url string) []byte {
@@ -33,7 +32,6 @@ func GetData(url string) []byte {
 	return data
 
 }
-
 
 // ListStations -- list all stations
 func ListStations() []string {
@@ -56,7 +54,6 @@ func ListStations() []string {
 	return tArray
 
 }
-
 
 // GetParseMap -- this comment required
 func GetParseMap(
@@ -92,8 +89,7 @@ func GetParseMap(
 	return database
 }
 
-
-// GetStationsRecords -- this will probably have to run this throug
+// GetStationsRecords -- gets records from arrivals
 func GetStationRecords(
 	station string, number int,
 	database []map[string]string) []map[string]string {

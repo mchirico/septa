@@ -198,4 +198,3 @@ func AddStation(station string) {
 	}
 
 }
-
