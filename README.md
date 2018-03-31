@@ -8,7 +8,10 @@ Golang program for pulling SEPTA data
 # Install
 ```bash
 
+# install:
 
+go get github.com/stretchr/testify/assert
+go get firebase.google.com/go
 go get -u github.com/mchirico/septa/...
 
 # To run it. This will create a token, if you don't have one.
@@ -32,6 +35,16 @@ go build github.com/mchirico/septa/septa
 go get firebase.google.com/go
 
 ```
+
+## Server
+
+This is the server program used to populate Firebase
+
+```bash
+go build github.com/mchirico/septa/routefirebase
+
+```
+
 
 
 ## Docker

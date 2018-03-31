@@ -23,7 +23,14 @@ func clientSecretFile() (string, error) {
 		return "", err
 	}
 	tokenCacheDir := filepath.Join(usr.HomeDir, ".google_firebase")
-	os.MkdirAll(tokenCacheDir, 0700)
+
+	file := filepath.Join(tokenCacheDir,
+		url.QueryEscape("token.json"))
+
+	// Can be used for travis-cli
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		tokenCacheDir = "../"
+	}
 	return filepath.Join(tokenCacheDir,
 		url.QueryEscape("token.json")), err
 }
