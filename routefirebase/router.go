@@ -5,14 +5,26 @@ import (
 	"time"
 )
 
+func init() {
+	firebase.Flags()
+}
+
 func main() {
 
-	firebase.Flags()
-	station := "Elkins Park"
+	stations := []string{
+		"Elkins Park",
+		"30th Street Station",
+		"Suburban Station",
+		"Airport Terminal A"}
 
 	for {
-		firebase.AddStation(station)
+
+		for _, station := range stations {
+			firebase.AddStation(station)
+			firebase.AddStation(station)
+		}
 		firebase.RefreshLiveView()
+
 		time.Sleep(time.Duration(firebase.QueryTime) *
 			1000 * time.Millisecond)
 	}
