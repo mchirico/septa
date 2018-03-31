@@ -7,6 +7,7 @@ os:
 - linux
 install:
 - go get github.com/stretchr/testify/assert
+- go get firebase.google.com/go
 script:
 - go test github.com/mchirico/septa/utils
 - go test github.com/mchirico/septa/firebase
