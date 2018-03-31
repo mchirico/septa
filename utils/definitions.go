@@ -29,9 +29,7 @@ type stationType struct {
 	Station    string
 }
 
-/*  StationList:
-     List of all Septa Regional Rail stops
- */
+//StationList List of all Septa Regional Rail stops
 func StationList() []stationType {
 	s := []stationType{
 
