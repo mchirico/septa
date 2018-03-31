@@ -20,8 +20,8 @@ func TestGetStationRecords(t *testing.T) {
 
 	m := GetStationRecords(station, 1)
 	tmp := strings.Split(m[0]["station"], ":")
-	departure_time := tmp[1]
-	fmt.Println("TMP", departure_time)
+	departureTime := tmp[1]
+	fmt.Println("TMP", departureTime)
 
 	for k, v := range m[0] {
 		fmt.Println(k, v)
