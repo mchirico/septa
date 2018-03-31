@@ -89,7 +89,7 @@ func GetParseMap(
 	return database
 }
 
-// GetStationsRecords -- gets records from arrivals
+// GetStationRecords -- gets records from arrivals
 func GetStationRecords(
 	station string, number int,
 	database []map[string]string) []map[string]string {
