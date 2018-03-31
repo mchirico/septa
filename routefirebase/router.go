@@ -1,10 +1,10 @@
 package main
 
-import  (
+import (
 	"github.com/mchirico/septa/firebase"
 )
 
-func main( ) {
+func main() {
 
 	station := "Elkins Park"
 
