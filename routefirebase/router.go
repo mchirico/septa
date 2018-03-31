@@ -9,5 +9,6 @@ func main() {
 	station := "Elkins Park"
 
 	firebase.AddStation(station)
+	firebase.RefreshLiveView()
 
 }

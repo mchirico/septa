@@ -54,6 +54,15 @@ func TestGetSingleDocument(t *testing.T) {
 }
 
 func TestAllDocumentsSingleDocument(t *testing.T) {
-	AllDocuments("trains")
+	AllDocuments("trains", "train_id")
+	AllDocuments("trainView", "TrainNo")
 	//fmt.Println(m[0]["train_id"])
+}
+
+func TestDeleteDocument(t *testing.T) {
+	DeleteDocument("trainView", "1507")
+}
+
+func TestRefreshLiveView(t *testing.T) {
+	RefreshLiveView()
 }
