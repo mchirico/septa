@@ -17,7 +17,8 @@ func printStations() {
 	}
 }
 
-// GetData: Basic http GET
+// GetData:
+// Basic http GET
 //
 func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
@@ -34,6 +35,7 @@ func GetData(url string) []byte {
 
 }
 
+// ListStations:
 // List all Stations
 func ListStations() []string {
 	station_url := "http://www3.septa.org/hackathon/Arrivals/station_id_name.csv"
@@ -57,6 +59,8 @@ func ListStations() []string {
 }
 
 /*
+GetParseMap:
+
 Parse output from http call and return mapped records
 
  */
@@ -98,7 +102,6 @@ GetStationsRecords:
    Will probably have to run this through GetParseMap
 
  */
-
 func GetStationRecords(
 	station string, number int,
 	database []map[string]string) []map[string]string {
