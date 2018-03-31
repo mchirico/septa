@@ -105,7 +105,7 @@ func DeleteStation(station string) {
 
 	_, err = client.Collection(station).Doc("*").Delete(ctx)
 	if err != nil {
-		fmt.Printf("Failed to delete", err)
+		fmt.Errorf("Failed to delete: %v",err)
 	}
 }
 
@@ -193,46 +193,3 @@ func AddStation(station string) {
 
 }
 
-func Start() {
-
-	ctx := context.Background()
-
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer client.Close()
-
-	_, _, err = client.Collection("users").Add(ctx, map[string]interface{}{
-		"first": "Ada",
-		"last":  "Lovelace",
-		"born":  1815,
-	})
-
-	if err != nil {
-		log.Fatalf("Failed adding alovelace: %v", err)
-	}
-
-	_, _, err = client.Collection("posts").Add(ctx, map[string]interface{}{
-		"title":   "Ada",
-		"content": "Lovelace",
-	})
-
-	if err != nil {
-		log.Fatalf("Failed adding alovelace: %v", err)
-	}
-
-	_, err = client.Collection("cities").Doc("DC").Delete(ctx)
-	if err != nil {
-		log.Fatalf("Failed to delete", err)
-	}
-
-}
