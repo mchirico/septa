@@ -91,7 +91,7 @@ func deleteCollection(ctx context.Context, client *firestore.Client,
 	}
 }
 
-//DeleteStation Simple delete test
+// DeleteStation -- simple delete test
 func DeleteStation(station string) {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
@@ -112,7 +112,7 @@ func DeleteStation(station string) {
 	}
 }
 
-//AllDocuments Returns all documents in the collection
+// AllDocuments -- returns all documents in the collection
 func AllDocuments(collection string) []map[string]interface{} {
 
 	var database []map[string]interface{}
@@ -146,7 +146,7 @@ func AllDocuments(collection string) []map[string]interface{} {
 	return database
 }
 
-//SingleDocument Grap a single document in the collection
+// SingleDocument -- grap a single document in the collection
 func SingleDocument() {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
@@ -170,7 +170,7 @@ func SingleDocument() {
 
 }
 
-//AddStation Add station to Firestore - 3 records
+// AddStation -- add station to Firestore - 3 records
 func AddStation(station string) {
 	ctx := context.Background()
 	file, _ := clientSecretFile()

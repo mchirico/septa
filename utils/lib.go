@@ -18,7 +18,7 @@ func printStations() {
 }
 
 
-//GetData Basic http GET
+// GetData --  basic http GET
 func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
 	res, err := http.Get(url)
@@ -35,7 +35,7 @@ func GetData(url string) []byte {
 }
 
 
-//ListStations  List all stations
+// ListStations -- list all stations
 func ListStations() []string {
 	stationURL := "http://www3.septa.org/hackathon/Arrivals/station_id_name.csv"
 
@@ -58,7 +58,7 @@ func ListStations() []string {
 }
 
 
-//GetParseMap
+// GetParseMap -- this comment required
 func GetParseMap(
 	b []byte,
 	database []map[string]string) []map[string]string {
@@ -93,7 +93,7 @@ func GetParseMap(
 }
 
 
-//GetStationsRecords  will probably have to run this through GetParseMap
+// GetStationsRecords -- this will probably have to run this throug
 func GetStationRecords(
 	station string, number int,
 	database []map[string]string) []map[string]string {
