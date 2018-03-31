@@ -10,6 +10,20 @@ import (
 	"testing"
 )
 
+func TestTokenDirAndFile(t *testing.T) {
+
+	before, _ := clientSecretFile()
+
+	TokenDirAndFile = "/note/spud/.token.json"
+	result, _ := clientSecretFile()
+	assert.EqualValues(t, result, TokenDirAndFile)
+
+	TokenDirAndFile = ""
+	result, _ = clientSecretFile()
+	assert.EqualValues(t, result, before)
+
+}
+
 func TestClientSecretFileNoToken(t *testing.T) {
 	file, _ := clientSecretFile()
 	assert.FileExistsf(t, file, "Token does not exit.")
