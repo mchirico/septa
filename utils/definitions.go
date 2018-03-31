@@ -1,19 +1,19 @@
 package utils
 
 type trainRun struct {
-	Direction    string `json:"direction"`
-	Path         string `json:"path"`
-	Train_id     string `json:"train_id"`
-	Origin       string `json:"origin"`
-	Destination  string `json:"destination"`
-	Line         string `json:"line"`
-	Status       string `json:"status"`
-	Service_type string `json:"service_type"`
-	Next_station string `json:"next_station"`
-	Sched_time   string `json:"sched_time"`
-	Depart_time  string `json:"depart_time"`
-	Track        string `json:"track"`
-	Track_change string `json:"track_change"`
+	Direction   string `json:"direction"`
+	Path        string `json:"path"`
+	TrainId     string `json:"train_id"`
+	Origin      string `json:"origin"`
+	Destination string `json:"destination"`
+	Line        string `json:"line"`
+	Status      string `json:"status"`
+	ServiceType string `json:"service_type"`
+	NextStation string `json:"next_station"`
+	SchedTime   string `json:"sched_time"`
+	DepartTime  string `json:"depart_time"`
+	Track       string `json:"track"`
+	TrackChange string `json:"track_change"`
 }
 
 type northRun struct {
@@ -25,8 +25,8 @@ type southRun struct {
 }
 
 type stationType struct {
-	Station_id int
-	Station    string
+	StationId int
+	Station   string
 }
 
 //StationList List of all Septa Regional Rail stops

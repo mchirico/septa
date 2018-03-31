@@ -42,12 +42,12 @@ func GetStationRecordsWrapper(
 	records := GetStationRecords(station, number)
 	tmp := strings.Split(records[0]["station"], ":")
 
-	station_rec_type := tmp[0]
+	stationRecType := tmp[0]
 
 	for k := range records {
 		records[k]["timestamp"] = fmt.Sprintf("%s:%s", tmp[1],
 			tmp[2])
-		records[k]["station_rec_type"] = station_rec_type
+		records[k]["station_rec_type"] = stationRecType
 	}
 	return records
 
