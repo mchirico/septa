@@ -7,8 +7,14 @@ import (
 
 func main() {
 
-	url := "https://www3.septa.org/hackathon/" +
-		"Arrivals/Suburban%20Station/25/"
-	fmt.Println(septa.Parse(septa.GetData(url)))
+	database := []map[string]string{}
+	station := "Elkins Park"
+	database = septa.GetStationRecords(station, 12, database)
+
+	for _, v := range database {
+		fmt.Printf("train_id:%4s, status:%11s, "+
+			"sched_time: %6s\n",
+			v["train_id"], v["status"], v["sched_time"])
+	}
 
 }

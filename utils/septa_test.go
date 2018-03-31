@@ -7,16 +7,6 @@ import (
 	"fmt"
 )
 
-func TestGetSuburban(t *testing.T) {
-
-	// fmt.Printf("%s", data)
-	url := "https://www3.septa.org/hackathon/" +
-		"Arrivals/Suburban%20Station/25/"
-	output := Parse(GetData(url))
-	assert.Contains(t, output, "train: ")
-
-}
-
 func TestListtations(t *testing.T) {
 	tmp := ListStations()
 	println(tmp[0])

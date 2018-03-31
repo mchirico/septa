@@ -9,26 +9,6 @@ import (
 	"testing"
 )
 
-func TestGetStation(t *testing.T) {
-
-	// fmt.Printf("%s", data)
-	url := "https://www3.septa.org/hackathon/Arrivals/Suburban%20Station/3/"
-	output := septa.Parse(septa.GetData(url))
-	assert.Contains(t, output, "train: ")
-
-}
-
-func TestPrintSuburban(t *testing.T) {
-	url := "https://www3.septa.org/hackathon/Arrivals/Suburban%20Station/25/"
-	fmt.Println(septa.Parse(septa.GetData(url)))
-
-}
-
-func TestPopulateFirebase(t *testing.T) {
-
-	Start()
-}
-
 func TestAddDeleteStation(t *testing.T) {
 	station := "Elkins Park"
 	//DeleteStation(station)
