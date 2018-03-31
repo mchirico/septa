@@ -28,12 +28,14 @@ func clientSecretFile() (string, error) {
 		url.QueryEscape("token.json")), err
 }
 
+// Builds database
 func GetStationRecords(station string, number int) []map[string]string {
 
 	var database []map[string]string
 	return septa.GetStationRecords(station, number, database)
 }
 
+// Adds timestamp to records
 func GetStationRecordsWrapper(
 	station string, number int) []map[string]string {
 
@@ -89,6 +91,7 @@ func deleteCollection(ctx context.Context, client *firestore.Client,
 	}
 }
 
+// Firebase simple delete
 func DeleteStation(station string) {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
@@ -105,10 +108,11 @@ func DeleteStation(station string) {
 
 	_, err = client.Collection(station).Doc("*").Delete(ctx)
 	if err != nil {
-		fmt.Errorf("Failed to delete: %v",err)
+		fmt.Errorf("Failed to delete:")
 	}
 }
 
+// Returns all documents in the collection
 func AllDocuments(collection string) []map[string]interface{} {
 
 	var database []map[string]interface{}
@@ -142,6 +146,7 @@ func AllDocuments(collection string) []map[string]interface{} {
 	return database
 }
 
+// Grap a single document in the collection
 func SingleDocument() {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
@@ -165,6 +170,7 @@ func SingleDocument() {
 
 }
 
+// Add station to Firestore - 3 records
 func AddStation(station string) {
 	ctx := context.Background()
 	file, _ := clientSecretFile()
