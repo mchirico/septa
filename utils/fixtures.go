@@ -1,6 +1,6 @@
 package utils
 
-var test_GetParseMap_data = []byte(
+var testGetParseMapData = []byte(
 	`{"Elkins Park Departures: March 30, 2018, 2:01 pm":
 [{"Northbound":[{"direction":"N","path":"R4N","train_id":"436",
 "origin":"Airport Terminal E-F","destination":"Warminster",

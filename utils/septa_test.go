@@ -15,7 +15,7 @@ func TestListtations(t *testing.T) {
 
 func TestGetParseMap(t *testing.T) {
 	  var database []map[string]string
-      m :=GetParseMap(test_GetParseMap_data,database)
+      m :=GetParseMap(testGetParseMapData,database)
       assert.EqualValues(t,3,len(m))
       assert.EqualValues(t,"436",m[0]["train_id"])
 	  assert.EqualValues(t,"438",m[1]["train_id"])

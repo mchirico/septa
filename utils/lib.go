@@ -37,23 +37,23 @@ func GetData(url string) []byte {
 
 //ListStations  List all stations
 func ListStations() []string {
-	station_url := "http://www3.septa.org/hackathon/Arrivals/station_id_name.csv"
+	stationURL := "http://www3.septa.org/hackathon/Arrivals/station_id_name.csv"
 
-	b := GetData(station_url)
-	t_array := []string{}
+	b := GetData(stationURL)
+	tArray := []string{}
 
 	s := string(b)
 	lines := strings.Split(s, "\n")
 	if len(lines) < 2 {
-		return t_array
+		return tArray
 	}
 
 	for _, v := range lines[1:] {
 		v := strings.Split(v, ",")
-		t_array = append(t_array, v[1])
+		tArray = append(tArray, v[1])
 	}
 	//fmt.Println(string(b))
-	return t_array
+	return tArray
 
 }
 
@@ -93,7 +93,7 @@ func GetParseMap(
 }
 
 
-//GetStationsRecords Will probably have to run this through GetParseMap
+//GetStationsRecords  will probably have to run this through GetParseMap
 func GetStationRecords(
 	station string, number int,
 	database []map[string]string) []map[string]string {
