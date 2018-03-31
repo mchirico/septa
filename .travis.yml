@@ -2,16 +2,13 @@ language: go
 sudo: required
 dist: trusty
 go:
-  - "1.10"
-
+- '1.10'
 os:
-  - linux
-
+- linux
 install:
-  - go get github.com/stretchr/testify/assert
-
+- go get github.com/stretchr/testify/assert
 script:
-  - go test github.com/mchirico/septa/utils
-  
-
-
+- go test github.com/mchirico/septa/utils
+before_install:
+- openssl aes-256-cbc -K $encrypted_032be19076da_key -iv $encrypted_032be19076da_iv
+  -in token.json.enc -out token.json -d

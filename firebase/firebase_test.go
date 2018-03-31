@@ -5,9 +5,16 @@ import (
 	septa "github.com/mchirico/septa/utils"
 	"github.com/stretchr/testify/assert"
 	_ "github.com/stretchr/testify/mock"
+	"strconv"
 	"strings"
 	"testing"
 )
+
+func TestClientSecretFileNoToken(t *testing.T) {
+	file, _ := clientSecretFile()
+	assert.FileExistsf(t, file, "Token does not exit.")
+
+}
 
 func TestAddDeleteStation(t *testing.T) {
 	station := "Elkins Park"
@@ -15,18 +22,32 @@ func TestAddDeleteStation(t *testing.T) {
 	AddStation(station)
 }
 
+// TestGetStationRecords -- live test and requires token.json
 func TestGetStationRecords(t *testing.T) {
 	station := "Elkins Park"
+	expected := 1
+	found := -1
 
 	m := GetStationRecords(station, 1)
 	tmp := strings.Split(m[0]["station"], ":")
 	departureTime := tmp[1]
-	fmt.Println("TMP", departureTime)
 
-	for k, v := range m[0] {
-		fmt.Println(k, v)
+	fmt.Println("TMP", departureTime)
+	fmt.Println("Live train_id:", m[0]["train_id"])
+
+	i, err := strconv.Atoi(m[0]["train_id"])
+	if err != nil {
+
+	} else {
+		if i > 100 {
+			expected = i
+			found = i
+		}
+
 	}
+	assert.EqualValues(t, expected, found)
 }
+
 func TestGetStationRecordsWrapper(t *testing.T) {
 
 	// TODO: Fix - Stations not all correct

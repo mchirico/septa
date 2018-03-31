@@ -33,6 +33,16 @@ go get firebase.google.com/go
 
 ```
 
+## Server
+
+This is the server program used to populate Firebase
+
+```bash
+go build github.com/mchirico/septa/routefirebase
+
+```
+
+
 
 ## Docker
 This is early development; but, you can test it with a docker image
