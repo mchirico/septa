@@ -104,6 +104,24 @@ func GetStationRecordsWrapper(
 
 }
 
+// GetAllStationsRecordsWrapper -- look closely at this
+func GetAllStationsRecordsWrapper(number int) []map[string]string {
+
+	groupOfRecords := septa.GetAllStationRecords(number)
+	for _, records := range groupOfRecords {
+
+		tmp := strings.Split(records["station"], ":")
+
+		stationRecType := tmp[0]
+
+		records["timestamp"] = fmt.Sprintf("%s:%s", tmp[1],
+			tmp[2])
+		records["station_rec_type"] = stationRecType
+
+	}
+	return groupOfRecords
+}
+
 func deleteCollection(ctx context.Context, client *firestore.Client,
 	ref *firestore.CollectionRef, batchSize int) error {
 
@@ -236,6 +254,37 @@ func AddStation(station string) {
 
 	number := 3
 	records := GetStationRecordsWrapper(station, number)
+
+	for _, rec := range records {
+		_, err := client.Collection("trains").Doc(rec["train_id"]).Set(ctx, rec)
+		if QuietMode == false {
+			fmt.Printf("Train updated: %s\n", rec["train_id"])
+		}
+
+		if err != nil {
+			fmt.Printf("error on insert collection")
+		}
+
+	}
+
+}
+
+// AddAllStations -- add all stations to Firestore
+func AddAllStations(number int) {
+	ctx := context.Background()
+	file, _ := clientSecretFile()
+	sa := option.WithCredentialsFile(file)
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer client.Close()
+
+	records := GetAllStationsRecordsWrapper(number)
 
 	for _, rec := range records {
 		_, err := client.Collection("trains").Doc(rec["train_id"]).Set(ctx, rec)

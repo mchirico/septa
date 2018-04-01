@@ -9,15 +9,23 @@ import (
 )
 
 func TestListtations(t *testing.T) {
+
 	tmp := ListStations()
-	println(tmp[0])
+	// Number of stations should be at least 19
+	success := false
+	if len(tmp[0]) >= 19 {
+		success = true
+	}
+	assert.Equal(t, true, success, "Stations not"+
+		" found, can you access the web?"+
+		" http://www3.septa.org/hackathon/Arrivals/station_id_name.csv")
 
 }
 
 func TestGetParseMap(t *testing.T) {
 	var database []map[string]string
 	m := GetParseMap(testGetParseMapData, database)
-	assert.EqualValues(t, 3, len(m))
+	assert.EqualValues(t, 6, len(m))
 	assert.EqualValues(t, "436", m[0]["train_id"])
 	assert.EqualValues(t, "438", m[1]["train_id"])
 	assert.EqualValues(t, "440", m[2]["train_id"])
@@ -29,6 +37,8 @@ func TestGetStationRecords(t *testing.T) {
 	station := "Elkins Park"
 
 	database := []map[string]string{}
+
+	GetAllStationRecords(3)
 
 	m := GetStationRecords(station, 3, database)
 	for _, v := range m {
