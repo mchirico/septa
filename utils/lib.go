@@ -55,6 +55,26 @@ func ListStations() []string {
 
 }
 
+// insertIndividualRecord -- local to GetParseMap
+func insertIndividualRecord(station string,
+	database []map[string]string,
+	records interface{},
+) []map[string]string {
+
+	for _, rec := range records.([]interface{}) {
+		m := rec.(map[string]interface{})
+		recordmap := map[string]string{}
+		recordmap["station"] = station
+		for k, v := range m {
+			if v != nil {
+				recordmap[string(k)] = v.(string)
+			}
+		}
+		database = append(database, recordmap)
+	}
+	return database
+}
+
 // GetParseMap -- specific to station arrivals
 func GetParseMap(
 	b []byte,
@@ -66,22 +86,32 @@ func GetParseMap(
 	}
 
 	for key, value := range data0 {
-		for _, v := range value.([]interface{}) {
+		valueType := fmt.Sprintf("%v", reflect.TypeOf(value))
+		if valueType != "[]interface {}" {
+			continue
+		}
+		iValue := value.([]interface{})
+		if iValue == nil {
+			continue
+		}
+		for _, v := range iValue {
 			station := key
-			records := v.(map[string]interface{})["Northbound"]
-			if records == nil {
-				continue
+			rType := fmt.Sprintf("%v", reflect.TypeOf(v))
+			if rType != "map[string]interface {}" {
+				return database
 			}
-			for _, rec := range records.([]interface{}) {
-				m := rec.(map[string]interface{})
-				recordmap := map[string]string{}
-				recordmap["station"] = station
-				for k, v := range m {
-					if v != nil {
-						recordmap[string(k)] = v.(string)
-					}
-				}
-				database = append(database, recordmap)
+
+			records := v.(map[string]interface{})["Northbound"]
+
+			if records != nil {
+				database = insertIndividualRecord(station,
+					database,
+					records)
+			}
+			records = v.(map[string]interface{})["Southbound"]
+			if records != nil {
+				database = insertIndividualRecord(station,
+					database, records)
 			}
 
 		}
@@ -106,6 +136,19 @@ func GetStationRecords(
 	}
 	return GetParseMap(data, database)
 
+}
+
+// GetAllStationRecords -- this gets everything
+func GetAllStationRecords(number int) []map[string]string {
+	database := []map[string]string{}
+	for _, station := range ListStations() {
+		database = GetStationRecords(station, number, database)
+		if database == nil {
+			fmt.Printf("Bad station:%s", station)
+		}
+
+	}
+	return database
 }
 
 // ParseLiveView -- specific to live view
@@ -136,6 +179,7 @@ func ParseLiveView(jsonStream []byte) []LiveViewMessage {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return database
 }
 

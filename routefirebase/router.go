@@ -9,20 +9,21 @@ func init() {
 	firebase.Flags()
 }
 
-func main() {
-
-	stations := []string{
-		"Elkins Park",
-		"30th Street Station",
-		"Suburban Station",
-		"Airport Terminal A"}
-
+// allstations -- separate thread. This takes a long time.
+func allstations(number int) {
 	for {
 
-		for _, station := range stations {
-			firebase.AddStation(station)
-			firebase.AddStation(station)
-		}
+		firebase.AddAllStations(number)
+		time.Sleep(time.Duration(firebase.QueryTime) *
+			1000 * time.Millisecond)
+	}
+}
+
+func main() {
+
+	go allstations(3)
+	for {
+
 		firebase.RefreshLiveView()
 
 		time.Sleep(time.Duration(firebase.QueryTime) *

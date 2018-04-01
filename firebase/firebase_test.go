@@ -71,7 +71,7 @@ func TestGetStationRecordsWrapper(t *testing.T) {
 		number := 3
 		tmp := GetStationRecordsWrapper(station, number)
 		assert.Contains(t, tmp[0]["station_rec_type"], station)
-		assert.EqualValues(t, number, len(tmp), "Short on records")
+		assert.EqualValues(t, number*2, len(tmp), "Short on records")
 		fmt.Printf(":%s", tmp[0]["time"])
 		for _, rec := range tmp {
 			fmt.Printf("\n:rec %v", rec)
@@ -100,4 +100,23 @@ func TestDeleteDocument(t *testing.T) {
 
 func TestRefreshLiveView(t *testing.T) {
 	RefreshLiveView()
+}
+
+func TestGetAllStationsRecordsWrapper(t *testing.T) {
+
+	success := false
+	m := GetAllStationsRecordsWrapper(3)
+	if len(m[0]["station_rec_type"]) > 3 {
+		fmt.Printf("%s\n", m[0]["station_rec_type"])
+		success = true
+	}
+	assert.Equal(t, true, success, "Network?")
+
+}
+
+func TestAddAllStations(t *testing.T) {
+
+	//AddAllStations(3)
+	fmt.Printf("This should only be run interactively")
+
 }
