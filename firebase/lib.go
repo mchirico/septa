@@ -273,9 +273,10 @@ func RefreshLiveView() {
 
 	for _, rec := range records {
 		_, err := client.Collection("trainView").Doc(rec.TrainNo).Set(ctx, rec)
-		trainMap[rec.TrainNo] = 1
 		if err != nil {
 			fmt.Printf("error on insert collection")
+		} else {
+			trainMap[rec.TrainNo] = 1
 		}
 
 	}

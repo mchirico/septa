@@ -136,6 +136,7 @@ func ParseLiveView(jsonStream []byte) []LiveViewMessage {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return database
 }
 
