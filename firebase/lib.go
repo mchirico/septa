@@ -162,20 +162,11 @@ func deleteCollection(ctx context.Context, client *firestore.Client,
 
 // DeleteDocument -- simple document delete
 func DeleteDocument(collection string, document string) {
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	_, err = client.Collection(collection).Doc(document).Delete(ctx)
+	_, err := client.Collection(collection).Doc(document).Delete(ctx)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -184,20 +175,10 @@ func DeleteDocument(collection string, document string) {
 // AllDocuments -- returns all documents in the collection
 func AllDocuments(collection string, document string) []map[string]interface{} {
 
-	var database []map[string]interface{}
-
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	ctx, client := OpenCtxClient()
 	defer client.Close()
+
+	var database []map[string]interface{}
 
 	iter := client.Collection(collection).Documents(ctx)
 	for {
@@ -215,17 +196,8 @@ func AllDocuments(collection string, document string) []map[string]interface{} {
 
 // SingleDocument -- grap a single document in the collection
 func SingleDocument() {
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	ctx, client := OpenCtxClient()
 	defer client.Close()
 
 	dsnap, err := client.Collection("trains").Doc("3420").Get(ctx)
@@ -239,17 +211,8 @@ func SingleDocument() {
 
 // AddStation -- add station to Firestore - 3 records
 func AddStation(station string) {
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	ctx, client := OpenCtxClient()
 	defer client.Close()
 
 	number := 3
@@ -271,17 +234,8 @@ func AddStation(station string) {
 
 // AddAllStations -- add all stations to Firestore
 func AddAllStations(number int) {
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	ctx, client := OpenCtxClient()
 	defer client.Close()
 
 	records := GetAllStationsRecordsWrapper(number)
@@ -302,17 +256,8 @@ func AddAllStations(number int) {
 
 // RefreshLiveView -- need to clean this up
 func RefreshLiveView() {
-	ctx := context.Background()
-	file, _ := clientSecretFile()
-	sa := option.WithCredentialsFile(file)
-	app, err := firebase.NewApp(ctx, nil, sa)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
+
+	ctx, client := OpenCtxClient()
 	defer client.Close()
 
 	records := septa.GetLiveViewRecords()
@@ -339,4 +284,54 @@ func RefreshLiveView() {
 		}
 	}
 
+}
+
+// OpenCtxClient -- open a connection
+func OpenCtxClient() (context.Context, *firestore.Client) {
+	ctx := context.Background()
+	file, _ := clientSecretFile()
+	sa := option.WithCredentialsFile(file)
+	app, err := firebase.NewApp(ctx, nil, sa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	client, err := app.Firestore(ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// defer client.Close()  //You must do this
+	return ctx, client
+}
+
+// insertUpdateDelete -- testing only
+//  Used for testing only
+func insertUpdateDelete() {
+
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+
+	type City struct {
+		Name       string
+		State      string
+		Country    string
+		Capital    bool
+		Population int64
+	}
+
+	cities := []struct {
+		id string
+		c  City
+	}{
+		{id: "SF", c: City{Name: "San Francisco", State: "CA", Country: "USA", Capital: false, Population: 860000}},
+		{id: "LA", c: City{Name: "Los Angeles", State: "CA", Country: "USA", Capital: false, Population: 3900000}},
+		{id: "DC", c: City{Name: "Washington D.C.", Country: "USA", Capital: false, Population: 680000}},
+		{id: "TOK", c: City{Name: "Tokyo", Country: "Japan", Capital: true, Population: 9000000}},
+		{id: "BJ", c: City{Name: "Beijing", Country: "China", Capital: true, Population: 21500000}},
+	}
+	for _, c := range cities {
+		_, err := client.Collection("cities").Doc(c.id).Set(ctx, c.c)
+		if err != nil {
+			return
+		}
+	}
 }
