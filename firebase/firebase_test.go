@@ -120,3 +120,9 @@ func TestAddAllStations(t *testing.T) {
 	fmt.Printf("This should only be run interactively")
 
 }
+
+func TestInsertUpdateDelete(t *testing.T) {
+
+	insertUpdateDelete()
+
+}
