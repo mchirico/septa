@@ -19,8 +19,18 @@ func allstations(number int) {
 	}
 }
 
+func rrSchedules() {
+	for {
+		firebase.AddRRSchedules()
+		time.Sleep(time.Duration(firebase.QueryTime) *
+			1000 * time.Millisecond)
+
+	}
+}
+
 func main() {
 
+	go rrSchedules()
 	go allstations(3)
 	for {
 

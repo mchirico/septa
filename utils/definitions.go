@@ -1,5 +1,23 @@
 package utils
 
+import "time"
+
+// TrainRRSchedules - will use for analytics
+type TrainRRSchedules struct {
+	TrainID     string
+	DocDate     string
+	Timestamp   time.Time
+	RRSchedules []RRSchedules
+}
+
+// RRSchedules - node of TrainRRSchedules
+type RRSchedules struct {
+	Station string `json:"station"`
+	SchedTM string `json:"sched_tm"`
+	EstTM   string `json:"est_tm"`
+	ActTM   string `json:"act_tm"`
+}
+
 // LiveViewMessage - see https://play.golang.org/p/XxsmA8a7YPj
 type LiveViewMessage struct {
 	Lat, Lon, TrainNo,

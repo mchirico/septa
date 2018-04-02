@@ -16,6 +16,7 @@ import (
 	"flag"
 	"fmt"
 	"google.golang.org/api/iterator"
+	"time"
 )
 
 // Version -- version of this program
@@ -232,6 +233,42 @@ func AddStation(station string) {
 
 }
 
+// AddRRSchedules -- mergeAll
+func AddRRSchedules() error {
+
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+
+	records := septa.GetLiveViewRecords()
+
+	type Doc struct {
+		DateTrainID      string
+		TrainRRSchedules septa.TrainRRSchedules
+	}
+
+	for _, train := range records {
+
+		rrSchedules := septa.GetRRSchedules(train.TrainNo)
+
+		doc := Doc{}
+		doc.DateTrainID = fmt.Sprintf("%s:%s", train.TrainNo, rrSchedules.DocDate)
+		doc.TrainRRSchedules = rrSchedules
+
+		m := map[string]Doc{}
+		m[train.TrainNo] = doc
+		_, err := client.Collection("rrSchedules").
+			Doc(rrSchedules.DocDate).Set(ctx, m, firestore.MergeAll)
+
+		if err != nil {
+			fmt.Printf("error on insert collection")
+			return err
+		}
+
+	}
+
+	return nil
+}
+
 // AddAllStations -- add all stations to Firestore
 func AddAllStations(number int) {
 
@@ -310,12 +347,18 @@ func insertUpdateDelete() {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
+	type H struct {
+		A string
+	}
+
 	type City struct {
 		Name       string
 		State      string
 		Country    string
 		Capital    bool
 		Population int64
+		Timestamp  time.Time
+		H          H
 	}
 
 	cities := []struct {
@@ -326,7 +369,7 @@ func insertUpdateDelete() {
 		{id: "LA", c: City{Name: "Los Angeles", State: "CA", Country: "USA", Capital: false, Population: 3900000}},
 		{id: "DC", c: City{Name: "Washington D.C.", Country: "USA", Capital: false, Population: 680000}},
 		{id: "TOK", c: City{Name: "Tokyo", Country: "Japan", Capital: true, Population: 9000000}},
-		{id: "BJ", c: City{Name: "Beijing", Country: "China", Capital: true, Population: 21500000}},
+		{id: "BJ", c: City{Name: "Beijing", Country: "China", Capital: false, Population: 21500000}},
 	}
 	for _, c := range cities {
 		_, err := client.Collection("cities").Doc(c.id).Set(ctx, c.c)
@@ -334,4 +377,63 @@ func insertUpdateDelete() {
 			return
 		}
 	}
+}
+
+// testQuery -- for experiment
+func testQuery() (firestore.Query, context.Context, *firestore.Client) {
+	ctx, client := OpenCtxClient()
+	query := client.Collection("cities").Where("State", "==", "CA")
+
+	iter := client.Collection("cities").Where("Capital", "==", true).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			print("iter done\n\n")
+			break
+		}
+		if err != nil {
+			fmt.Println("error")
+		}
+		fmt.Println("doc.Data():", doc.Data())
+	}
+
+	return query, ctx, client
+}
+
+// DateTimeParse -- takes are variety of expected dates
+func DateTimeParse(s string) (time.Time, error) {
+	layout := []string{
+		"January 2, 2006, 3:04 pm",
+		"January 2, 2006, 3:04pm",
+		"January 2, 2006, 03:04 pm",
+		"January 2 2006, 03:04 pm",
+		"January 2 2006 03:04 pm",
+
+		"January 2, 2006, 3:04 pm",
+		"January 2 2006, 3:04 pm",
+		"January 2 2006 3:04 pm",
+		"Jan 2, 2006, 03:04 pm",
+		"Jan 2 2006, 03:04 pm",
+		"Jan 2, 2006, 3:04 pm",
+		"Jan 2, 06, 3:04 pm",
+		"2006-01-02 3:04 pm",
+		"2006-01-02 3:04pm",
+		"2006-01-02 3:04 PM",
+		"2006-01-02 3:04PM",
+		"2006-01-02 15:04",
+	}
+
+	s = strings.Join(strings.Fields(s), " ")
+	fmt.Printf("-->%s\n", s)
+
+	for _, l := range layout[:len(layout)-1] {
+		t, err := time.Parse(l, s)
+		if err == nil {
+			return t, err
+		}
+
+	}
+
+	return time.Parse(layout[len(layout)-1], s)
+
 }
