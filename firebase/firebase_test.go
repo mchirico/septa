@@ -148,7 +148,7 @@ func TestDateTimeParse(t *testing.T) {
 
 func TestQueryRRSchedules(t *testing.T) {
 
-	QueryRRSchedules("2329", "2018-04-03")
+	QueryRRSchedules("2357", "2018-04-03")
 }
 
 func TestDevExperimentingWithCollections(t *testing.T) {
