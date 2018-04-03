@@ -5,6 +5,7 @@ import (
 	septa "github.com/mchirico/septa/utils"
 	"github.com/stretchr/testify/assert"
 	_ "github.com/stretchr/testify/mock"
+	"google.golang.org/api/iterator"
 	"strconv"
 	"strings"
 	"testing"
@@ -122,7 +123,75 @@ func TestAddAllStations(t *testing.T) {
 }
 
 func TestInsertUpdateDelete(t *testing.T) {
-
 	insertUpdateDelete()
+}
+
+func TestNode(t *testing.T) {
+
+}
+
+func TestDateTimeParse(t *testing.T) {
+	s := " April 2, 2018, 6:45 am"
+	tt, err := DateTimeParse(s)
+	assert.Nil(t, err)
+
+	s = " Apr 2, 2018, 6:45 am"
+	tt, err = DateTimeParse(s)
+	assert.Nil(t, err)
+
+	s = " Apr 2, 18, 6:45 am"
+	tt, err = DateTimeParse(s)
+	assert.Nil(t, err)
+
+	fmt.Println(tt.Unix())
+}
+
+func TestQuery(t *testing.T) {
+
+	f, ctx, client := testQuery()
+	defer client.Close()
+
+	// Get the first 25 cities, ordered by population.
+	//iter := f.OrderBy("population", firestore.Asc).Limit(25).Documents(ctx)
+
+	iter := f.Documents(ctx)
+	for {
+		doc, err := iter.Next()
+
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return
+		}
+		fmt.Printf("HERE: created:%v, %v", doc.CreateTime, doc.Data())
+	}
+	//docs, err := firstPage.GetAll()
+
+	fmt.Printf("\n ----------  Next -------------\n\n")
+	iter = client.Collection("cities").Where("Capital", "==", true).Documents(ctx)
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return
+		}
+		fmt.Println(doc.Data())
+	}
+
+	dsnap, err := client.Collection("trains").Doc("1054").Get(ctx)
+	if err != nil {
+		return
+	}
+	m := dsnap.Data()
+	fmt.Printf("Document data: %#v\n", m)
+
+}
+
+func TestAddRRSchedules(t *testing.T) {
+	assert.Nil(t, AddRRSchedules(), "Running?")
 
 }

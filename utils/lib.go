@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+	"time"
 )
 
 func printStations() {
@@ -190,4 +191,55 @@ func GetLiveViewRecords() []LiveViewMessage {
 	jsonStream := GetData(url)
 	return ParseLiveView(jsonStream)
 
+}
+
+// GetRRSchedules --
+func GetRRSchedules(train string) TrainRRSchedules {
+
+	url := fmt.Sprintf(
+		"http://www3.septa.org/hackathon/RRSchedules/%s", train)
+	jsonStream := GetData(url)
+	return ParseRRSchedules(jsonStream, train)
+
+}
+
+// ParseRRSchedules -- schedule times of trains
+func ParseRRSchedules(jsonStream []byte, train string) TrainRRSchedules {
+
+	dec := json.NewDecoder(strings.NewReader(string(jsonStream)))
+
+	trainRRSchedules := TrainRRSchedules{}
+
+	records := []RRSchedules{}
+
+	// read open bracket
+	_, err := dec.Token()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for dec.More() {
+		var m RRSchedules
+		err := dec.Decode(&m)
+		if err != nil {
+			log.Fatal(err)
+		}
+		records = append(records, m)
+	}
+
+	// read closing bracket
+	_, err = dec.Token()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t := time.Now()
+	time.LoadLocation("America/New_York")
+	trainRRSchedules.RRSchedules = records
+	trainRRSchedules.TrainID = train
+	trainRRSchedules.Timestamp = t
+
+	trainRRSchedules.DocDate = t.Format("2006-01-02")
+
+	return trainRRSchedules
 }
