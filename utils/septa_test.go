@@ -6,6 +6,7 @@ import (
 	_ "github.com/stretchr/testify/mock"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestListtations(t *testing.T) {
@@ -65,5 +66,18 @@ func TestGetLiveView(t *testing.T) {
 		}
 	}
 	assert.EqualValues(t, true, flag, "Are trains running?")
+
+}
+
+func TestGetRRSchedules(t *testing.T) {
+
+	m := GetLiveViewRecords()
+	r := GetRRSchedules(m[0].TrainNo)
+	fmt.Printf("%v\n", r.TrainID)
+	for _, v := range r.RRSchedules {
+		fmt.Printf("%v\n", v.Station)
+	}
+
+	assert.Equal(t, r.DocDate, time.Now().Format("2006-01-02"))
 
 }
