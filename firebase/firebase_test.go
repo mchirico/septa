@@ -146,6 +146,16 @@ func TestDateTimeParse(t *testing.T) {
 	fmt.Println(tt.Unix())
 }
 
+func TestQueryRRSchedules(t *testing.T) {
+
+	QueryRRSchedules("2329", "2018-04-03")
+}
+
+func TestDevExperimentingWithCollections(t *testing.T) {
+
+	devExperimentingWithCollections()
+}
+
 func TestQuery(t *testing.T) {
 
 	f, ctx, client := testQuery()

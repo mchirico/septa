@@ -257,7 +257,7 @@ func AddRRSchedules() error {
 		m := map[string]Doc{}
 		m[train.TrainNo] = doc
 		_, err := client.Collection("rrSchedules").
-			Doc(rrSchedules.DocDate).Set(ctx, m, firestore.MergeAll)
+			Doc(rrSchedules.DocDate).Collection(train.TrainNo).Doc(rrSchedules.DocDate).Set(ctx, m, firestore.MergeAll)
 
 		if err != nil {
 			fmt.Printf("error on insert collection")
@@ -379,12 +379,40 @@ func insertUpdateDelete() {
 	}
 }
 
-// testQuery -- for experiment
-func testQuery() (firestore.Query, context.Context, *firestore.Client) {
+// devExperimentingWithCollections -- used to do tests on collections and documents
+func devExperimentingWithCollections() (firestore.Query, context.Context, *firestore.Client) {
 	ctx, client := OpenCtxClient()
-	query := client.Collection("cities").Where("State", "==", "CA")
 
-	iter := client.Collection("cities").Where("Capital", "==", true).Documents(ctx)
+	type H struct {
+		Z map[string]string
+	}
+
+	type Hb struct {
+		A H
+		M H
+	}
+
+	z := H{}
+	hb := Hb{}
+	m := map[string]string{}
+	m["test"] = "s3"
+	m["bob"] = "34"
+
+	z.Z = m
+	hb.A = z
+
+	fmt.Printf("h.b: %v", hb)
+
+	client.Collection("testTrain").Doc("2018-04-03").
+		Collection("345").Doc("A").Collection("1").Doc("id").Set(ctx, hb)
+
+	m["Bob"] = "Bounce"
+	client.Collection("testTrain").Doc("2018-04-03").
+		Collection("345").Doc("B").Collection("1").Doc("id").Set(ctx, hb)
+
+	iter := client.Collection("testTrain").Doc("2018-04-03").
+		Collection("345").Doc("A").Collection("1").Documents(ctx)
+
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -396,6 +424,65 @@ func testQuery() (firestore.Query, context.Context, *firestore.Client) {
 		}
 		fmt.Println("doc.Data():", doc.Data())
 	}
+
+	query := client.Collection("testTrain").Where("A", "==", map[string]string{"test": "ss3"})
+	return query, ctx, client
+
+}
+
+// testQuery -- for experiments
+func testQuery() (firestore.Query, context.Context, *firestore.Client) {
+	ctx, client := OpenCtxClient()
+
+	query := client.Collection("cities").Where("State", "==", "CA")
+
+	iter := client.Collection("cities").Where("State", "==", "CA").Documents(ctx)
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			print("iter done\n\n")
+			break
+		}
+		if err != nil {
+			fmt.Println("error")
+		}
+		fmt.Println("doc.Data():", doc.Data())
+	}
+
+	return query, ctx, client
+}
+
+// QueryRRSchedules  -- will be used for querying.
+func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.Context,
+	*firestore.Client) {
+
+	dateTrainID := fmt.Sprintf("%s:%s", trainNo, docDate)
+
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+
+	//iter := client.Collection("rrSchedules").
+	//	Where("3236.DateTrainID", "==", "3236:2018-04-03").Documents(ctx)
+
+	iter := client.Collection("rrSchedules").
+		Where("434.DateTrainID", "==", "432:2018-04-03").Documents(ctx)
+
+	//client.Collection("rrSchedules").Doc("2018-04-03").Delete(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			print("iter done\n\n")
+			break
+		}
+		if err != nil {
+			fmt.Println("error")
+		}
+		fmt.Println("doc.Data():", doc.Data())
+	}
+
+	query := client.Collection("rrSchedules").
+		Where("DateTrainID", "==", dateTrainID)
 
 	return query, ctx, client
 }
