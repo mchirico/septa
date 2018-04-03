@@ -462,13 +462,9 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	//iter := client.Collection("rrSchedules").
-	//	Where("3236.DateTrainID", "==", "3236:2018-04-03").Documents(ctx)
+	iter := client.Collection("rrSchedules").Doc(docDate).
+		Collection(trainNo).Documents(ctx)
 
-	iter := client.Collection("rrSchedules").
-		Where("434.DateTrainID", "==", "432:2018-04-03").Documents(ctx)
-
-	//client.Collection("rrSchedules").Doc("2018-04-03").Delete(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -478,7 +474,20 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 		if err != nil {
 			fmt.Println("error")
 		}
-		fmt.Println("doc.Data():", doc.Data())
+		fmt.Println("doc.Data()[2357]:", doc.Data()[trainNo])
+
+		type Doc struct {
+			DateTrainID      string
+			TrainRRSchedules septa.TrainRRSchedules
+		}
+
+		k2 := map[string]Doc{}
+		doc.DataTo(&k2)
+
+		fmt.Printf("k2[trainNo].DateTrainID:  %v\n", k2[trainNo].DateTrainID)
+		fmt.Printf("k2[trainNo].TrainRRSchedules:  %v\n", k2[trainNo].TrainRRSchedules)
+		fmt.Printf("k2[trainNo].TrainRRSchedules.Timestamp: %v\n", k2[trainNo].TrainRRSchedules.Timestamp)
+
 	}
 
 	query := client.Collection("rrSchedules").
