@@ -453,6 +453,7 @@ func testQuery() (firestore.Query, context.Context, *firestore.Client) {
 	return query, ctx, client
 }
 
+// QueryRRSchedules  -- will be used for querying.
 func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.Context,
 	*firestore.Client) {
 
