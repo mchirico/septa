@@ -10,8 +10,7 @@ install:
 - go get firebase.google.com/go
 
 script:
-- go test -coverprofile=coverage0.txt -covermode=atomic github.com/mchirico/septa/utils
-- go test -coverprofile=coverage1.txt -covermode=atomic github.com/mchirico/septa/firebase
+- go test -coverprofile=c.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
 
 before_install:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -24,5 +23,5 @@ before_install:
   -in token.json.enc -out token.json -d
 
 after_success:
-- bash cat coverage0.txt coverage1.txt > c.out
+
 - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
