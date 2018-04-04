@@ -2,6 +2,9 @@ package utils
 
 import "time"
 
+// URLTravelAlerts - this has all alerts
+var URLTravelAlerts = "http://www3.septa.org/hackathon/Alerts/"
+
 // TrainRRSchedules - will use for analytics
 type TrainRRSchedules struct {
 	TrainID     string
