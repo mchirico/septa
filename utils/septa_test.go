@@ -77,7 +77,7 @@ func TestGetRRSchedules(t *testing.T) {
 	for _, v := range r.RRSchedules {
 		fmt.Printf("%v\n", v.Station)
 	}
-
-	assert.Equal(t, r.DocDate, time.Now().Format("2006-01-02"))
+	loc, _ := time.LoadLocation("America/New_York")
+	assert.Equal(t, r.DocDate, time.Now().In(loc).Format("2006-01-02"))
 
 }
