@@ -147,8 +147,8 @@ func TestDateTimeParse(t *testing.T) {
 }
 
 func TestQueryRRSchedules(t *testing.T) {
-
-	QueryRRSchedules("2357", "2018-04-03")
+	// FIXME: You need to grab a live train.
+	QueryRRSchedules("452", "2018-04-03")
 }
 
 func TestDevExperimentingWithCollections(t *testing.T) {

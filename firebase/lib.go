@@ -468,7 +468,7 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
-			print("iter done\n\n")
+			print("\n\niter done\n\n")
 			break
 		}
 		if err != nil {
@@ -484,9 +484,24 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 		k2 := map[string]Doc{}
 		doc.DataTo(&k2)
 
-		fmt.Printf("k2[trainNo].DateTrainID:  %v\n", k2[trainNo].DateTrainID)
-		fmt.Printf("k2[trainNo].TrainRRSchedules:  %v\n", k2[trainNo].TrainRRSchedules)
-		fmt.Printf("k2[trainNo].TrainRRSchedules.Timestamp: %v\n", k2[trainNo].TrainRRSchedules.Timestamp)
+		// FIXME: Works but pull this into a separate structure
+		fmt.Printf("k2[trainNo].DateTrainID:  %v\n",
+			k2[trainNo].DateTrainID)
+		fmt.Printf("k2[trainNo].TrainRRSchedules:  %v\n",
+			k2[trainNo].TrainRRSchedules)
+		fmt.Printf("k2[trainNo].TrainRRSchedules.Timestamp: %v\n",
+			k2[trainNo].TrainRRSchedules.Timestamp)
+		fmt.Printf("k2[trainNo].TrainRRSchedules.DocDate: %v\n",
+			k2[trainNo].TrainRRSchedules.DocDate)
+		fmt.Printf("k2[trainNo].TrainRRSchedules.RRSchedules[0].Station: %v\n",
+			k2[trainNo].TrainRRSchedules.RRSchedules[0].Station)
+
+		fmt.Printf("\n ---------------------------:\n")
+		for _, v := range k2[trainNo].TrainRRSchedules.RRSchedules {
+
+			fmt.Printf("%s: %s %s %s\n", v.Station, v.ActTM, v.EstTM, v.SchedTM)
+
+		}
 
 	}
 

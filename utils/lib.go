@@ -233,8 +233,8 @@ func ParseRRSchedules(jsonStream []byte, train string) TrainRRSchedules {
 		log.Fatal(err)
 	}
 
-	t := time.Now()
-	time.LoadLocation("America/New_York")
+	loc, _ := time.LoadLocation("America/New_York")
+	t := time.Now().In(loc)
 	trainRRSchedules.RRSchedules = records
 	trainRRSchedules.TrainID = train
 	trainRRSchedules.Timestamp = t
