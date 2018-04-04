@@ -484,7 +484,6 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 		k2 := map[string]Doc{}
 		doc.DataTo(&k2)
 
-		// FIXME: Works but pull this into a separate structure
 		fmt.Printf("k2[trainNo].DateTrainID:  %v\n",
 			k2[trainNo].DateTrainID)
 		fmt.Printf("k2[trainNo].TrainRRSchedules:  %v\n",
