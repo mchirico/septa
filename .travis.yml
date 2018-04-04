@@ -17,7 +17,7 @@ before_install:
 - chmod +x ./cc-test-reporter
 - ./cc-test-reporter before-build
 
-- sudo apt-get update -q
+# - sudo apt-get update -q
 
 - openssl aes-256-cbc -K $encrypted_032be19076da_key -iv $encrypted_032be19076da_iv
   -in token.json.enc -out token.json -d
