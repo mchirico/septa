@@ -203,6 +203,13 @@ func GetRRSchedules(train string) TrainRRSchedules {
 
 }
 
+// GetAlerts - url for get alerts
+func GetAlerts() string {
+
+	url := "http://www3.septa.org/hackathon/Alerts/"
+	return url
+}
+
 // ParseRRSchedules -- schedule times of trains
 func ParseRRSchedules(jsonStream []byte, train string) TrainRRSchedules {
 
