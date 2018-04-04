@@ -8,14 +8,21 @@ os:
 install:
 - go get github.com/stretchr/testify/assert
 - go get firebase.google.com/go
+
 script:
 - go test -coverprofile=coverage0.txt -covermode=atomic github.com/mchirico/septa/utils
 - go test -coverprofile=coverage1.txt -covermode=atomic github.com/mchirico/septa/firebase
+
 before_install:
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
+- ./cc-test-reporter before-build
+
 - sudo apt-get update -q
+
 - openssl aes-256-cbc -K $encrypted_032be19076da_key -iv $encrypted_032be19076da_iv
   -in token.json.enc -out token.json -d
 
 after_success:
-- bash cat coverage0.txt coverage1.txt > coverage.txt
-- bash <(curl -s https://codecov.io/bash)
+- bash cat coverage0.txt coverage1.txt > c.out
+- ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
