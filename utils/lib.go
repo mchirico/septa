@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-func printStations() {
-	for _, k := range StationList() {
-		fmt.Println(reflect.TypeOf(k))
-		fmt.Println(k.Station)
-	}
-}
-
 // GetData --  basic http GET returning raw data
 func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
@@ -201,6 +194,13 @@ func GetRRSchedules(train string) TrainRRSchedules {
 	jsonStream := GetData(url)
 	return ParseRRSchedules(jsonStream, train)
 
+}
+
+// GetAlerts - url for get alerts
+func GetAlerts() string {
+
+	url := "http://www3.septa.org/hackathon/Alerts/"
+	return url
 }
 
 // ParseRRSchedules -- schedule times of trains

@@ -2,6 +2,9 @@ package utils
 
 import "time"
 
+// URLTravelAlerts - this has all alerts
+var URLTravelAlerts = "http://www3.septa.org/hackathon/Alerts/"
+
 // TrainRRSchedules - will use for analytics
 type TrainRRSchedules struct {
 	TrainID     string
@@ -56,35 +59,4 @@ type southRun struct {
 type StationType struct {
 	StationID int
 	Station   string
-}
-
-// StationList -- this is not a complete list. Use for testing.
-func StationList() []StationType {
-	s := []StationType{
-
-		{90004, "30th Street Station"},
-		{90404, "Airport Terminal A"},
-		{90403, "Airport Terminal B"},
-		{90402, "Airport Terminal C-D"},
-		{90401, "Airport Terminal E-F"},
-		{90208, "Allegheny"},
-		{90804, "Allen Lane"},
-		{90526, "Ambler"},
-		{90313, "Angora"},
-		{90309, "Clifton-Aldan"},
-		{90533, "Colmar"},
-		{90225, "Conshohocken"},
-		{90706, "Cornwells Heights"},
-		{90414, "Crestmont"},
-		{90704, "Croydon"},
-		{90409, "Elkins Park"},
-		{90504, "Exton"},
-		{90407, "Fern Rock TC"},
-		{90312, "Fernwood"},
-		{90214, "Folcroft"},
-		{90005, "Suburban Station"},
-		{90305, "Swarthmore"},
-	}
-
-	return s
 }
