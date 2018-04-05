@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-func printStations() {
-	for _, k := range StationList() {
-		fmt.Println(reflect.TypeOf(k))
-		fmt.Println(k.Station)
-	}
-}
-
 // GetData --  basic http GET returning raw data
 func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
