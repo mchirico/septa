@@ -269,28 +269,6 @@ func AddRRSchedules() error {
 	return nil
 }
 
-// AddAllStations -- add all stations to Firestore
-func AddAllStations(number int) {
-
-	ctx, client := OpenCtxClient()
-	defer client.Close()
-
-	records := GetAllStationsRecordsWrapper(number)
-
-	for _, rec := range records {
-		_, err := client.Collection("trains").Doc(rec["train_id"]).Set(ctx, rec)
-		if QuietMode == false {
-			fmt.Printf("Train updated: %s\n", rec["train_id"])
-		}
-
-		if err != nil {
-			fmt.Printf("error on insert collection")
-		}
-
-	}
-
-}
-
 // RefreshLiveView -- need to clean this up
 func RefreshLiveView() {
 

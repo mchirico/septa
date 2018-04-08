@@ -8,6 +8,7 @@ import (
 	_ "github.com/stretchr/testify/mock"
 	"google.golang.org/api/iterator"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"testing"
@@ -29,11 +30,32 @@ func TestFlags(t *testing.T) {
 	time := flag.Lookup("time").Value.(flag.Getter).Get().(int)
 	assert.Equal(t, 20, time)
 
+	// Example of set
+	flag.Set("time", "3")
+	time = flag.Lookup("time").Value.(flag.Getter).Get().(int)
+	assert.Equal(t, 3, time)
+
 	token := flag.Lookup("token").Value.(flag.Getter).Get().(string)
 	assert.Equal(t, "", token)
 
 	fmt.Printf("time: %d", time)
 
+}
+
+// Very cool... see
+//  https://talks.golang.org/2014/testing.slide#23
+func TestHelloCrasher(t *testing.T) {
+	if os.Getenv("BE_CRASHER") == "1" {
+		help()
+		return
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=TestHelloCrasher")
+	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+		return
+	}
+	t.Fatalf("process ran with err %v, want exit status 1", err)
 }
 
 func TestTokenDirAndFile(t *testing.T) {
@@ -137,13 +159,6 @@ func TestGetAllStationsRecordsWrapper(t *testing.T) {
 		success = true
 	}
 	assert.Equal(t, true, success, "Network?")
-
-}
-
-func TestAddAllStations(t *testing.T) {
-
-	//AddAllStations(3)
-	fmt.Printf("This should only be run interactively")
 
 }
 
