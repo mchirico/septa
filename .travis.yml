@@ -9,6 +9,7 @@ install:
 - go get github.com/stretchr/testify/assert
 - go get firebase.google.com/go
 
+
 script:
 - go test -coverprofile=c.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
 
@@ -25,3 +26,9 @@ before_install:
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+
+
+
+
+
+
