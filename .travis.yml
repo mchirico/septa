@@ -11,7 +11,8 @@ install:
 
 
 script:
-- go test -coverprofile=c.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
+- go test -coverprofile=c0.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/septa
+- go test -coverprofile=c1.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
 
 before_install:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -24,6 +25,8 @@ before_install:
   -in token.json.enc -out token.json -d
 
 after_success:
+- cat c0.out c1.out > c.out
+- cp c.out coverage.txt
 - bash <(curl -s https://codecov.io/bash)
 - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
