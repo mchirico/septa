@@ -1,15 +1,40 @@
 package firebase
 
 import (
+	"flag"
 	"fmt"
 	septa "github.com/mchirico/septa/utils"
 	"github.com/stretchr/testify/assert"
 	_ "github.com/stretchr/testify/mock"
 	"google.golang.org/api/iterator"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	Flags()
+	os.Exit(m.Run())
+}
+
+func TestFlags(t *testing.T) {
+
+	help := flag.Lookup("help").Value.(flag.Getter).Get().(bool)
+	assert.False(t, help)
+
+	quiet := flag.Lookup("quiet").Value.(flag.Getter).Get().(bool)
+	assert.False(t, quiet)
+
+	time := flag.Lookup("time").Value.(flag.Getter).Get().(int)
+	assert.Equal(t, 20, time)
+
+	token := flag.Lookup("token").Value.(flag.Getter).Get().(string)
+	assert.Equal(t, "", token)
+
+	fmt.Printf("time: %d", time)
+
+}
 
 func TestTokenDirAndFile(t *testing.T) {
 

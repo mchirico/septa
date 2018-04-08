@@ -17,8 +17,6 @@ go get -u github.com/mchirico/septa/...
 
 
 
-
-
 ```
 
 ## Build
