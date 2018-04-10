@@ -241,6 +241,95 @@ func AddStation(station string) {
 
 }
 
+// AllStationsByTime --
+func AllStationsByTime() {
+
+	records := septa.GetLiveViewRecords()
+
+	for _, train := range records {
+		AddStationsByTime(train.TrainNo)
+	}
+}
+
+// AddStationsByTime -- add station data
+func AddStationsByTime(trainNo string) error {
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+	//trainNo := "412"
+	rrSchedules := septa.GetRRSchedules(trainNo)
+
+	type StationStop struct {
+		Station string
+		ActTM   string
+		EstTM   string
+		SchedTM string
+	}
+
+	for i := range rrSchedules.RRSchedules {
+
+		m := rrSchedules.RRSchedules[i]
+
+		timeSquish, _ := DateTimeParse(
+			fmt.Sprintf("%s %s",
+				rrSchedules.DocDate,
+				m.SchedTM)).getTimeLocSquish()
+
+		r := map[string]string{"Station": m.Station,
+			"ActTM": m.ActTM, "EstTM": m.EstTM,
+			"SchedTM": m.SchedTM,
+			"TrainID": rrSchedules.TrainID}
+
+		SchedTM, _ := DateTimeParse(
+			fmt.Sprintf("%s %s",
+				rrSchedules.DocDate,
+				m.SchedTM)).getTimeLocHRminS()
+
+		_, err := client.Collection("StationsByTime").
+			Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[i].Station).
+			Doc(timeSquish).Collection(rrSchedules.TrainID).Doc(SchedTM).Set(ctx, r, firestore.MergeAll)
+
+		if err != nil {
+			fmt.Printf("error on insert")
+		}
+	}
+	return nil
+}
+
+// AddStations -- add station data
+func AddStations(trainNo string) error {
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+	//trainNo := "412"
+	rrSchedules := septa.GetRRSchedules(trainNo)
+
+	fmt.Printf("%v\n", rrSchedules.DocDate)
+	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].Station)
+
+	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
+	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
+
+	type StationStop struct {
+		Station string
+		ActTM   string
+		EstTM   string
+		SchedTM string
+	}
+	m := rrSchedules.RRSchedules[0]
+
+	r := map[string]string{"Station": m.Station, "ActTM": m.ActTM, "EstTM": m.EstTM, "SchedTM": m.SchedTM}
+
+	_, err := client.Collection("Stations").
+		Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[0].Station).
+		Doc(trainNo).Set(ctx, r, firestore.MergeAll)
+
+	if err != nil {
+		fmt.Printf("error on insert")
+		return err
+	}
+
+	return nil
+}
+
 // AddRRSchedules -- mergeAll
 func AddRRSchedules() error {
 
@@ -248,11 +337,6 @@ func AddRRSchedules() error {
 	defer client.Close()
 
 	records := septa.GetLiveViewRecords()
-
-	type Doc struct {
-		DateTrainID      string
-		TrainRRSchedules septa.TrainRRSchedules
-	}
 
 	for _, train := range records {
 
@@ -547,7 +631,10 @@ func QueryRRSchedules(trainNo string, docDate string) (firestore.Query, context.
 }
 
 // DateTimeParse -- takes are variety of expected dates
-func DateTimeParse(s string) (time.Time, error) {
+type DateTimeParse string
+
+// getTime --
+func (s DateTimeParse) getTime() (time.Time, error) {
 	layout := []string{
 		"January 2, 2006, 3:04 pm",
 		"January 2, 2006, 3:04pm",
@@ -569,17 +656,53 @@ func DateTimeParse(s string) (time.Time, error) {
 		"2006-01-02 15:04",
 	}
 
-	s = strings.Join(strings.Fields(s), " ")
-	fmt.Printf("-->%s\n", s)
+	st := strings.Join(strings.Fields(string(s)), " ")
+	//fmt.Printf("-->%s\n", st)
 
 	for _, l := range layout[:len(layout)-1] {
-		t, err := time.Parse(l, s)
+		t, err := time.Parse(l, st)
 		if err == nil {
 			return t, err
 		}
 
 	}
 
-	return time.Parse(layout[len(layout)-1], s)
+	return time.Parse(layout[len(layout)-1], st)
+
+}
+
+// getTimeLoc --
+func (s DateTimeParse) getTimeLoc() (time.Time, error) {
+
+	tt, err := DateTimeParse(s).getTime()
+	if err != nil {
+		return tt, err
+	}
+	loc, err := time.LoadLocation("America/New_York")
+
+	return tt.In(loc), err
+
+}
+
+func (s DateTimeParse) getTimeLocSquish() (string, error) {
+
+	tt, err := DateTimeParse(s).getTime()
+	if err != nil {
+		return "", err
+	}
+	squishMin := int(tt.Minute()/10) * 10
+	ret := fmt.Sprintf("%02d:%02d", tt.Hour(), squishMin)
+	return ret, err
+
+}
+
+func (s DateTimeParse) getTimeLocHRminS() (string, error) {
+
+	tt, err := DateTimeParse(s).getTime()
+	if err != nil {
+		return "", err
+	}
+	ret := fmt.Sprintf("%02d:%02d", tt.Hour(), tt.Minute())
+	return ret, err
 
 }
