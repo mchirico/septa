@@ -5,7 +5,6 @@ import (
 	"fmt"
 	septa "github.com/mchirico/septa/utils"
 	"github.com/stretchr/testify/assert"
-	_ "github.com/stretchr/testify/mock"
 	"google.golang.org/api/iterator"
 	"os"
 	"os/exec"
@@ -15,14 +14,13 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	Flags()
+	flag.Parse()
 	os.Exit(m.Run())
 }
 
 func TestFlags(t *testing.T) {
 
-	help := flag.Lookup("help").Value.(flag.Getter).Get().(bool)
-	assert.False(t, help)
+	Flags()
 
 	quiet := flag.Lookup("quiet").Value.(flag.Getter).Get().(bool)
 	assert.False(t, quiet)
@@ -44,12 +42,12 @@ func TestFlags(t *testing.T) {
 
 // Very cool... see
 //  https://talks.golang.org/2014/testing.slide#23
-func TestHelloCrasher(t *testing.T) {
+func TestFatalExit(t *testing.T) {
 	if os.Getenv("BE_CRASHER") == "1" {
-		help()
+		fatalExit("help!")
 		return
 	}
-	cmd := exec.Command(os.Args[0], "-test.run=TestHelloCrasher")
+	cmd := exec.Command(os.Args[0], "-test.run=TestFatalExit")
 	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
 	err := cmd.Run()
 	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
@@ -57,6 +55,8 @@ func TestHelloCrasher(t *testing.T) {
 	}
 	t.Fatalf("process ran with err %v, want exit status 1", err)
 }
+
+// Reference: https://npf.io/2015/06/testing-exec-command/
 
 func TestTokenDirAndFile(t *testing.T) {
 
@@ -244,4 +244,27 @@ func TestQuery(t *testing.T) {
 func TestAddRRSchedules(t *testing.T) {
 	assert.Nil(t, AddRRSchedules(), "Running?")
 
+}
+
+func TestQueryRRSchedulesDetail(t *testing.T) {
+
+	database := QueryRRSchedulesByDate("2018-04-10")
+	for k, _ := range database {
+
+		docDate := database[k][k].TrainRRSchedules.DocDate
+		allStops := database[k][k].TrainRRSchedules.RRSchedules
+		fmt.Printf("\n\n%v: %s \n", docDate, k)
+		for _, v := range allStops {
+			fmt.Printf("%s: %s,%s,%s\n",
+				v.Station,
+				v.SchedTM,
+				v.EstTM,
+				v.ActTM)
+		}
+
+	}
+
+	// We know these values are correct
+	testStation := database["330"]["330"].TrainRRSchedules.RRSchedules[0].Station
+	assert.Equal(t, "Elwyn Station", testStation)
 }

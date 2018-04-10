@@ -31,15 +31,27 @@ var QueryTime = 20
 // QuietMode -- router no output if true
 var QuietMode = false
 
-func help() {
-	os.Exit(1)
+// Doc -- struct for entering RRSchedules
+type Doc struct {
+	DateTrainID      string
+	TrainRRSchedules septa.TrainRRSchedules
+}
+
+// Record --
+type Record map[string]Doc
+
+// Database --
+type Database map[string]Record
+
+func fatalExit(msg string) {
+
+	// Add future update to firebase
+	log.Fatalf("Fatal Call")
+
 }
 
 // Flags -- used in routerfirebase
 func Flags() {
-
-	helpVar := false
-	flag.BoolVar(&helpVar, "help", false, "help listing")
 
 	flag.BoolVar(&QuietMode, "quiet", false, "set to true"+
 		" for no quiet output:  ./routefirebase -quiet=true")
@@ -50,10 +62,6 @@ func Flags() {
 		"directory and file of token.json\n"+
 			"   ./routefirebase -token='/stuff/token.json'")
 	flag.Parse()
-
-	if helpVar {
-		help()
-	}
 
 }
 
@@ -429,6 +437,56 @@ func testQuery() (firestore.Query, context.Context, *firestore.Client) {
 	}
 
 	return query, ctx, client
+}
+
+// QueryRRSchedulesByDate --
+func QueryRRSchedulesByDate(docDate string) Database {
+
+	ctx, client := OpenCtxClient()
+	defer client.Close()
+
+	database := Database{}
+
+	iter := client.Collection("rrSchedules").
+		Doc(docDate).Collections(ctx)
+
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		iter2 := doc.Documents(ctx)
+		for {
+			doc, err := iter2.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				fmt.Println("error")
+			}
+
+			record := Record{}
+			doc.DataTo(&record)
+
+			for _, r := range record {
+				//fmt.Printf("value = %v\n",v)
+				database[r.TrainRRSchedules.TrainID] = record
+				//fmt.Printf("TrainID:%v\n", r.DateTrainID)
+				//fmt.Printf("v.TrainRRSchedules.RRSchedules: %v\n", r.TrainRRSchedules.RRSchedules)
+				//schedules := r.TrainRRSchedules.RRSchedules[0]
+				//
+				//fmt.Printf("Station: %v, %v\n", schedules.Station, schedules.ActTM)
+			}
+
+		}
+
+	}
+
+	return database
 }
 
 // QueryRRSchedules  -- will be used for querying.
