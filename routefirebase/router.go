@@ -9,11 +9,11 @@ func init() {
 	firebase.Flags()
 }
 
-// allstations -- separate thread. This takes a long time.
-func allstations(number int) {
+// allstationsByTime -- separate thread. This takes a long time.
+func allstationsByTime() {
 	for {
 
-		firebase.AddAllStations(number)
+		firebase.AllStationsByTime()
 		time.Sleep(time.Duration(firebase.QueryTime) *
 			1000 * time.Millisecond)
 	}
@@ -31,7 +31,7 @@ func rrSchedules() {
 func main() {
 
 	go rrSchedules()
-	go allstations(3)
+	go allstationsByTime()
 	for {
 
 		firebase.RefreshLiveView()

@@ -1,15 +1,62 @@
 package firebase
 
 import (
+	"flag"
 	"fmt"
 	septa "github.com/mchirico/septa/utils"
 	"github.com/stretchr/testify/assert"
-	_ "github.com/stretchr/testify/mock"
 	"google.golang.org/api/iterator"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	os.Exit(m.Run())
+}
+
+func TestFlags(t *testing.T) {
+
+	Flags()
+
+	quiet := flag.Lookup("quiet").Value.(flag.Getter).Get().(bool)
+	assert.False(t, quiet)
+
+	time := flag.Lookup("time").Value.(flag.Getter).Get().(int)
+	assert.Equal(t, 20, time)
+
+	// Example of set
+	flag.Set("time", "3")
+	time = flag.Lookup("time").Value.(flag.Getter).Get().(int)
+	assert.Equal(t, 3, time)
+
+	token := flag.Lookup("token").Value.(flag.Getter).Get().(string)
+	assert.Equal(t, "", token)
+
+	fmt.Printf("time: %d", time)
+
+}
+
+// Very cool... see
+//  https://talks.golang.org/2014/testing.slide#23
+func TestFatalExit(t *testing.T) {
+	if os.Getenv("BE_CRASHER") == "1" {
+		fatalExit("help!")
+		return
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=TestFatalExit")
+	cmd.Env = append(os.Environ(), "BE_CRASHER=1")
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+		return
+	}
+	t.Fatalf("process ran with err %v, want exit status 1", err)
+}
+
+// Reference: https://npf.io/2015/06/testing-exec-command/
 
 func TestTokenDirAndFile(t *testing.T) {
 
@@ -115,13 +162,6 @@ func TestGetAllStationsRecordsWrapper(t *testing.T) {
 
 }
 
-func TestAddAllStations(t *testing.T) {
-
-	//AddAllStations(3)
-	fmt.Printf("This should only be run interactively")
-
-}
-
 func TestInsertUpdateDelete(t *testing.T) {
 	insertUpdateDelete()
 }
@@ -131,16 +171,20 @@ func TestNode(t *testing.T) {
 }
 
 func TestDateTimeParse(t *testing.T) {
-	s := " April 2, 2018, 6:45 am"
-	tt, err := DateTimeParse(s)
+	s := " April 2, 2018, 6:45 pm"
+	tt, err := DateTimeParse(s).getTimeLoc()
 	assert.Nil(t, err)
 
+	t3, _ := DateTimeParse(s).getTimeLocSquish()
+	fmt.Printf("Time: %v \n",
+		t3)
+
 	s = " Apr 2, 2018, 6:45 am"
-	tt, err = DateTimeParse(s)
+	tt, err = DateTimeParse(s).getTime()
 	assert.Nil(t, err)
 
 	s = " Apr 2, 18, 6:45 am"
-	tt, err = DateTimeParse(s)
+	tt, err = DateTimeParse(s).getTime()
 	assert.Nil(t, err)
 
 	fmt.Println(tt.Unix())
@@ -203,5 +247,55 @@ func TestQuery(t *testing.T) {
 
 func TestAddRRSchedules(t *testing.T) {
 	assert.Nil(t, AddRRSchedules(), "Running?")
+
+}
+
+func TestQueryRRSchedulesByDate(t *testing.T) {
+
+	database := QueryRRSchedulesByDate("2018-04-10")
+	for k, _ := range database {
+
+		docDate := database[k][k].TrainRRSchedules.DocDate
+		allStops := database[k][k].TrainRRSchedules.RRSchedules
+		fmt.Printf("\n\n%v: %s \n", docDate, k)
+		for _, v := range allStops {
+			fmt.Printf("%s: %s,%s,%s\n",
+				v.Station,
+				v.SchedTM,
+				v.EstTM,
+				v.ActTM)
+		}
+
+	}
+
+	// We know these values are correct
+	testStation := database["330"]["330"].TrainRRSchedules.RRSchedules[0].Station
+	assert.Equal(t, "Elwyn Station", testStation)
+}
+
+func TestAddStations(t *testing.T) {
+
+	AddStations("412")
+	AddStations("426")
+}
+
+func TestAddStationsByTime(t *testing.T) {
+
+	AddStationsByTime("412")
+	//AddStationsByTime("426")
+}
+
+// This is too long
+//func TestAllStationsByTime(t *testing.T) {
+//
+//	AllStationsByTime()
+//
+//}
+
+func TestGetTimeLocHRminS(t *testing.T) {
+
+	r, _ := DateTimeParse("2018-04-10 3:01 pm").getTimeLocHRminS()
+
+	assert.Equal(t, "15:01", r)
 
 }
