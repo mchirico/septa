@@ -171,16 +171,20 @@ func TestNode(t *testing.T) {
 }
 
 func TestDateTimeParse(t *testing.T) {
-	s := " April 2, 2018, 6:45 am"
-	tt, err := DateTimeParse(s)
+	s := " April 2, 2018, 6:45 pm"
+	tt, err := DateTimeParse(s).getTimeLoc()
 	assert.Nil(t, err)
 
+	t3, _ := DateTimeParse(s).getTimeLocSquish()
+	fmt.Printf("Time: %v \n",
+		t3)
+
 	s = " Apr 2, 2018, 6:45 am"
-	tt, err = DateTimeParse(s)
+	tt, err = DateTimeParse(s).getTime()
 	assert.Nil(t, err)
 
 	s = " Apr 2, 18, 6:45 am"
-	tt, err = DateTimeParse(s)
+	tt, err = DateTimeParse(s).getTime()
 	assert.Nil(t, err)
 
 	fmt.Println(tt.Unix())
@@ -246,7 +250,7 @@ func TestAddRRSchedules(t *testing.T) {
 
 }
 
-func TestQueryRRSchedulesDetail(t *testing.T) {
+func TestQueryRRSchedulesByDate(t *testing.T) {
 
 	database := QueryRRSchedulesByDate("2018-04-10")
 	for k, _ := range database {
@@ -267,4 +271,31 @@ func TestQueryRRSchedulesDetail(t *testing.T) {
 	// We know these values are correct
 	testStation := database["330"]["330"].TrainRRSchedules.RRSchedules[0].Station
 	assert.Equal(t, "Elwyn Station", testStation)
+}
+
+func TestAddStations(t *testing.T) {
+
+	AddStations("412")
+	AddStations("426")
+}
+
+func TestAddStationsByTime(t *testing.T) {
+
+	AddStationsByTime("412")
+	//AddStationsByTime("426")
+}
+
+// This is too long
+//func TestAllStationsByTime(t *testing.T) {
+//
+//	AllStationsByTime()
+//
+//}
+
+func TestGetTimeLocHRminS(t *testing.T) {
+
+	r, _ := DateTimeParse("2018-04-10 3:01 pm").getTimeLocHRminS()
+
+	assert.Equal(t, "15:01", r)
+
 }
