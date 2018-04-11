@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	_ "github.com/stretchr/testify/mock"
+	"os"
 	"strconv"
 	"testing"
 	"time"
@@ -79,5 +80,53 @@ func TestGetRRSchedules(t *testing.T) {
 	}
 	loc, _ := time.LoadLocation("America/New_York")
 	assert.Equal(t, r.DocDate, time.Now().In(loc).Format("2006-01-02"))
+
+}
+
+// You should not have to run this. This was used to create
+// Fixture data.
+func createFixtureData() {
+	url := "http://www3.septa.org/hackathon/TrainView/"
+	jsonStream := GetData(url)
+	f, err := os.Create("../fixtures/FullTrainView.json")
+	if err != nil {
+		fmt.Printf("error opening file")
+	}
+	f.Write(jsonStream)
+	f.Close()
+
+}
+
+func getSampleFullTrainView() []byte {
+	f, err := os.Open("../fixtures/FullTrainView.json")
+	if err != nil {
+		fmt.Printf("error opening file")
+	}
+	data := make([]byte, 105210)
+	n, err := f.Read(data)
+	fmt.Printf("number of bytes read: %v\n", n)
+
+	return data
+}
+
+func TestFixtureData(t *testing.T) {
+
+	database := ParseLiveView(getSampleFullTrainView())
+
+	assert.Equal(t, "39.95514", database[0].Lat)
+	assert.Equal(t, 7, database[34].Late)
+
+}
+
+func BenchmarkStuff(b *testing.B) {
+
+	jsonData := getSampleFullTrainView()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		ParseLiveView(jsonData)
+	}
+	b.StopTimer()
+	b.ReportAllocs()
+	fmt.Printf("N:%v\n", b.N)
 
 }
