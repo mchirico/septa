@@ -313,22 +313,24 @@ func AddStations(trainNo string) error {
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 
-	m := rrSchedules.RRSchedules[0]
+	for i := range rrSchedules.RRSchedules {
 
-	r := map[string]string{"Station": m.Station,
-		"ActTM": m.ActTM, "EstTM": m.EstTM,
-		"SchedTM": m.SchedTM,
-		"trainNo": trainNo}
+		m := rrSchedules.RRSchedules[i]
 
-	_, err := client.Collection("Stations").
-		Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[0].Station).
-		Doc(trainNo).Set(ctx, r, firestore.MergeAll)
+		r := map[string]string{"Station": m.Station,
+			"ActTM": m.ActTM, "EstTM": m.EstTM,
+			"SchedTM": m.SchedTM,
+			"trainNo": trainNo}
 
-	if err != nil {
-		fmt.Printf("error on insert")
-		return err
+		_, err := client.Collection("Stations").
+			Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[i].Station).
+			Doc(trainNo).Set(ctx, r, firestore.MergeAll)
+
+		if err != nil {
+			fmt.Printf("error on insert")
+			return err
+		}
 	}
-
 	return nil
 }
 
