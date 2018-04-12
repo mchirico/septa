@@ -139,44 +139,6 @@ func GetAllStationsRecordsWrapper(number int) []map[string]string {
 	return groupOfRecords
 }
 
-func deleteCollection(ctx context.Context, client *firestore.Client,
-	ref *firestore.CollectionRef, batchSize int) error {
-
-	for {
-		// Get a batch of documents
-		iter := ref.Limit(batchSize).Documents(ctx)
-		numDeleted := 0
-
-		// Iterate through the documents, adding
-		// a delete operation for each one to a
-		// WriteBatch.
-		batch := client.Batch()
-		for {
-			doc, err := iter.Next()
-			if err == iterator.Done {
-				break
-			}
-			if err != nil {
-				return err
-			}
-
-			batch.Delete(doc.Ref)
-			numDeleted++
-		}
-
-		// If there are no documents to delete,
-		// the process is over.
-		if numDeleted == 0 {
-			return nil
-		}
-
-		_, err := batch.Commit(ctx)
-		if err != nil {
-			return err
-		}
-	}
-}
-
 // DeleteDocument -- simple document delete
 func DeleteDocument(collection string, document string) {
 
@@ -252,7 +214,10 @@ func AddStation(station string) {
 // AllStationsByTime --
 func AllStationsByTime() {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	for _, train := range records {
 		go AddStationsByTime(train.TrainNo)
@@ -340,7 +305,10 @@ func AddRRSchedules() error {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return err
+	}
 
 	for _, train := range records {
 
@@ -371,7 +339,10 @@ func RefreshLiveView() {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	oldRecords := AllDocuments("trainView", "TrainNo")
 	trainMap := map[string]int{}
