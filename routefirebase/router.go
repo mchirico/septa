@@ -14,7 +14,8 @@ func allstationsByTime() {
 	for {
 
 		firebase.AllStationsByTime()
-		time.Sleep(time.Duration(firebase.QueryTime) *
+
+		time.Sleep(2 *
 			1000 * time.Millisecond)
 	}
 }
