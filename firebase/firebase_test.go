@@ -275,22 +275,22 @@ func TestQueryRRSchedulesByDate(t *testing.T) {
 
 func TestAddStations(t *testing.T) {
 
-	AddStations("412")
-	AddStations("426")
+	//AddStations("412")
+	//AddStations("426")
 }
 
 func TestAddStationsByTime(t *testing.T) {
 
-	AddStationsByTime("412")
+	//AddStationsByTime("412")
 	//AddStationsByTime("426")
 }
 
 // This is too long
-//func TestAllStationsByTime(t *testing.T) {
-//
-//	AllStationsByTime()
-//
-//}
+func TestAllStationsByTime(t *testing.T) {
+
+	// AllStationsByTime()
+
+}
 
 func TestGetTimeLocHRminS(t *testing.T) {
 
