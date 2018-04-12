@@ -279,6 +279,7 @@ func TestAddStations(t *testing.T) {
 	if len(records) < 3 {
 		t.Fatal("Not enough records to run test")
 	}
+
 	err := AddStations(records[0].TrainNo)
 	if err != nil {
 		t.Fatal("AddStations returned an error")
