@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/mchirico/septa/firebase"
+	septa "github.com/mchirico/septa/utils"
 	"time"
 )
 
@@ -14,9 +15,9 @@ func allstationsByTime() {
 	for {
 
 		firebase.AllStationsByTime()
-
-		time.Sleep(2 *
+		time.Sleep(time.Duration(firebase.QueryTime) *
 			1000 * time.Millisecond)
+
 	}
 }
 
@@ -29,8 +30,28 @@ func rrSchedules() {
 	}
 }
 
+func allStations() {
+
+	records := septa.GetLiveViewRecords()
+
+	for _, train := range records {
+		go firebase.AddStationsByTime(train.TrainNo)
+	}
+
+}
+
+func allStationsWrapper() {
+	for {
+		allStations()
+		time.Sleep(time.Duration(firebase.QueryTime) *
+			1000 * time.Millisecond)
+
+	}
+}
+
 func main() {
 
+	go allStationsWrapper()
 	go rrSchedules()
 	go allstationsByTime()
 	for {

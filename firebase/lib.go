@@ -43,6 +43,14 @@ type Record map[string]Doc
 // Database --
 type Database map[string]Record
 
+// StationStop --
+type StationStop struct {
+	Station string
+	ActTM   string
+	EstTM   string
+	SchedTM string
+}
+
 func fatalExit(msg string) {
 
 	// Add future update to firebase
@@ -247,7 +255,7 @@ func AllStationsByTime() {
 	records := septa.GetLiveViewRecords()
 
 	for _, train := range records {
-		AddStationsByTime(train.TrainNo)
+		go AddStationsByTime(train.TrainNo)
 	}
 }
 
@@ -258,11 +266,8 @@ func AddStationsByTime(trainNo string) error {
 	//trainNo := "412"
 	rrSchedules := septa.GetRRSchedules(trainNo)
 
-	type StationStop struct {
-		Station string
-		ActTM   string
-		EstTM   string
-		SchedTM string
+	if QuietMode == false {
+		fmt.Printf("Station updated for trainNo: %s\n", trainNo)
 	}
 
 	for i := range rrSchedules.RRSchedules {
@@ -308,15 +313,12 @@ func AddStations(trainNo string) error {
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 
-	type StationStop struct {
-		Station string
-		ActTM   string
-		EstTM   string
-		SchedTM string
-	}
 	m := rrSchedules.RRSchedules[0]
 
-	r := map[string]string{"Station": m.Station, "ActTM": m.ActTM, "EstTM": m.EstTM, "SchedTM": m.SchedTM}
+	r := map[string]string{"Station": m.Station,
+		"ActTM": m.ActTM, "EstTM": m.EstTM,
+		"SchedTM": m.SchedTM,
+		"trainNo": trainNo}
 
 	_, err := client.Collection("Stations").
 		Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[0].Station).
