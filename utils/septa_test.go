@@ -51,7 +51,7 @@ func TestGetStationRecords(t *testing.T) {
 
 func TestGetLiveView(t *testing.T) {
 
-	m := GetLiveViewRecords()
+	m, _ := GetLiveViewRecords()
 
 	flag := false
 	for _, v := range m {
@@ -72,7 +72,7 @@ func TestGetLiveView(t *testing.T) {
 
 func TestGetRRSchedules(t *testing.T) {
 
-	m := GetLiveViewRecords()
+	m, _ := GetLiveViewRecords()
 	r := GetRRSchedules(m[0].TrainNo)
 	fmt.Printf("%v\n", r.TrainID)
 	for _, v := range r.RRSchedules {
@@ -111,10 +111,24 @@ func getSampleFullTrainView() []byte {
 
 func TestFixtureData(t *testing.T) {
 
-	database := ParseLiveView(getSampleFullTrainView())
+	database, _ := ParseLiveView(getSampleFullTrainView())
 
 	assert.Equal(t, "39.95514", database[0].Lat)
 	assert.Equal(t, 7, database[34].Late)
+
+}
+
+func TestGetDataError(t *testing.T) {
+	b := GetData("https://23kla")
+	if len(b) != 0 {
+		t.Error(t, "GetData not failing correctly")
+	}
+
+	r, err := ParseLiveView(b)
+	if err == nil {
+		fmt.Printf("r=%v\n", r)
+		t.Error(t, "Err not caught")
+	}
 
 }
 

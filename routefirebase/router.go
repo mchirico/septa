@@ -32,7 +32,10 @@ func rrSchedules() {
 
 func allStations() {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	for _, train := range records {
 		go firebase.AddStationsByTime(train.TrainNo)

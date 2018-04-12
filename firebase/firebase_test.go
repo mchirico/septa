@@ -275,12 +275,15 @@ func TestQueryRRSchedulesByDate(t *testing.T) {
 
 func TestAddStations(t *testing.T) {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		t.Fatal("Should not return nil")
+	}
 	if len(records) < 3 {
 		t.Fatal("Not enough records to run test")
 	}
 
-	err := AddStations(records[0].TrainNo)
+	err = AddStations(records[0].TrainNo)
 	if err != nil {
 		t.Fatal("AddStations returned an error")
 	}

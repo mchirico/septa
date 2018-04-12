@@ -252,7 +252,10 @@ func AddStation(station string) {
 // AllStationsByTime --
 func AllStationsByTime() {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	for _, train := range records {
 		go AddStationsByTime(train.TrainNo)
@@ -340,7 +343,10 @@ func AddRRSchedules() error {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return err
+	}
 
 	for _, train := range records {
 
@@ -371,7 +377,10 @@ func RefreshLiveView() {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	oldRecords := AllDocuments("trainView", "TrainNo")
 	trainMap := map[string]int{}

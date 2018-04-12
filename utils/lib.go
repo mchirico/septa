@@ -16,7 +16,8 @@ func GetData(url string) []byte {
 	// http://www3.septa.org/hackathon/TrainView/
 	res, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("GetData err: %v", err)
+		return []byte{}
 	}
 	data, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
@@ -147,7 +148,7 @@ func GetAllStationRecords(number int) []map[string]string {
 
 // ParseLiveView -- specific to live view
 //    Reference: https://play.golang.org/p/XxsmA8a7YPj
-func ParseLiveView(jsonStream []byte) []LiveViewMessage {
+func ParseLiveView(jsonStream []byte) ([]LiveViewMessage, error) {
 
 	dec := json.NewDecoder(strings.NewReader(string(jsonStream)))
 
@@ -156,7 +157,8 @@ func ParseLiveView(jsonStream []byte) []LiveViewMessage {
 	// read open bracket
 	_, err := dec.Token()
 	if err != nil {
-		log.Fatal(err)
+
+		return database, err
 	}
 
 	for dec.More() {
@@ -164,6 +166,7 @@ func ParseLiveView(jsonStream []byte) []LiveViewMessage {
 		err := dec.Decode(&m)
 		if err != nil {
 			log.Fatal(err)
+			return database, err
 		}
 		database = append(database, m)
 	}
@@ -171,14 +174,14 @@ func ParseLiveView(jsonStream []byte) []LiveViewMessage {
 	// read closing bracket
 	_, err = dec.Token()
 	if err != nil {
-		log.Fatal(err)
+		return database, err
 	}
 
-	return database
+	return database, nil
 }
 
 // GetLiveViewRecords -- gets live view
-func GetLiveViewRecords() []LiveViewMessage {
+func GetLiveViewRecords() ([]LiveViewMessage, error) {
 
 	url := "http://www3.septa.org/hackathon/TrainView/"
 	jsonStream := GetData(url)
