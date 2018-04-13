@@ -18,6 +18,7 @@ type Buffer struct {
 	// sharing.
 }
 
+// Record -- for listing times.
 type Record struct {
 	Time    []time.Time
 	seconds []int
