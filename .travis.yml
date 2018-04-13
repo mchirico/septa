@@ -11,8 +11,8 @@ install:
 
 
 script:
-- go test -coverprofile=c0.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/utils
-- go test -coverprofile=c1.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
+- go test -v -coverprofile=c0.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/utils
+- go test -v -coverprofile=c1.out -covermode=atomic github.com/mchirico/septa/utils github.com/mchirico/septa/firebase
 
 before_install:
 - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
