@@ -53,13 +53,13 @@ func ListStations() []string {
 // insertIndividualRecord -- local to GetParseMap
 func insertIndividualRecord(station string,
 	database []map[string]string,
-	records interface{},
-) []map[string]string {
+	records interface{}, direction string) []map[string]string {
 
 	for _, rec := range records.([]interface{}) {
 		m := rec.(map[string]interface{})
 		recordmap := map[string]string{}
 		recordmap["station"] = station
+		recordmap["direction"] = direction
 		for k, v := range m {
 			if v != nil {
 				recordmap[string(k)] = v.(string)
@@ -101,12 +101,12 @@ func GetParseMap(
 			if records != nil {
 				database = insertIndividualRecord(station,
 					database,
-					records)
+					records, "N")
 			}
 			records = v.(map[string]interface{})["Southbound"]
 			if records != nil {
 				database = insertIndividualRecord(station,
-					database, records)
+					database, records, "S")
 			}
 
 		}

@@ -238,7 +238,6 @@ func AddStationsByTime(trainNo string) error {
 	for i := range rrSchedules.RRSchedules {
 
 		m := rrSchedules.RRSchedules[i]
-
 		timeSquish, _ := DateTimeParse(
 			fmt.Sprintf("%s %s",
 				rrSchedules.DocDate,
