@@ -8,6 +8,7 @@ import (
 
 func init() {
 	firebase.Flags()
+
 }
 
 // allstationsByTime -- separate thread. This takes a long time.
