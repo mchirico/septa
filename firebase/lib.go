@@ -31,6 +31,9 @@ var QueryTime = 20
 // QuietMode -- router no output if true
 var QuietMode = false
 
+// LogFile -- log file location
+var LogFile = ""
+
 // Doc -- struct for entering RRSchedules
 type Doc struct {
 	DateTrainID      string
@@ -58,6 +61,18 @@ func fatalExit(msg string) {
 
 }
 
+// SetLogging -- place to put logfile
+func SetLogging() {
+	f, err := os.OpenFile(LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+	log.Println("Start up")
+}
+
 // Flags -- used in routerfirebase
 func Flags() {
 
@@ -69,7 +84,13 @@ func Flags() {
 		"",
 		"directory and file of token.json\n"+
 			"   ./routefirebase -token='/stuff/token.json'")
+
+	flag.StringVar(&LogFile, "logfile",
+		"./log",
+		"log file location")
+
 	flag.Parse()
+	SetLogging()
 
 }
 
