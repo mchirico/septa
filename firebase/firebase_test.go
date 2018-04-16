@@ -273,13 +273,38 @@ func TestQueryRRSchedulesByDate(t *testing.T) {
 	assert.Equal(t, "Elwyn Station", testStation)
 }
 
+func TestGetLiveViewRecords(t *testing.T) {
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		t.Fatal("Should not return nil")
+	}
+	if len(records) < 2 {
+		t.Fatal("Can't run this at night")
+	}
+	for i := range records {
+		_, err := strconv.ParseFloat(records[i].Lat, 64)
+		if err != nil {
+			t.Error(" Must have lat")
+		}
+		_, err = strconv.ParseFloat(records[i].Lon, 64)
+		if err != nil {
+			t.Error(" Must have lon")
+		}
+	}
+
+}
+
 func TestAddStations(t *testing.T) {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		t.Fatal("Should not return nil")
+	}
 	if len(records) < 3 {
 		t.Fatal("Not enough records to run test")
 	}
-	err := AddStations(records[0].TrainNo)
+
+	err = AddStations(records[0].TrainNo)
 	if err != nil {
 		t.Fatal("AddStations returned an error")
 	}

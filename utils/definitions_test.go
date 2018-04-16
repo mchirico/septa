@@ -13,6 +13,7 @@ func fixtureReader(file string) *json.Decoder {
 
 	dat, err := ioutil.ReadFile(file)
 	if err != nil {
+		log.Printf("Failure in fixtureReader")
 		log.Fatal(err)
 	}
 	jsonStream := string(dat)
@@ -31,10 +32,12 @@ func TestDefinitions(t *testing.T) {
 	jsonStream := string(dat)
 
 	dec := json.NewDecoder(strings.NewReader(jsonStream))
-	print(dec)
 
 	_, err = dec.Token()
-	assert.Nil(t, err)
+	if err != nil {
+		log.Printf("TestDefinitions... dec.Token()")
+		return
+	}
 
 	for dec.More() {
 		var m LiveViewMessage

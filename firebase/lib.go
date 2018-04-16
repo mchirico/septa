@@ -31,6 +31,9 @@ var QueryTime = 20
 // QuietMode -- router no output if true
 var QuietMode = false
 
+// LogFile -- log file location
+var LogFile = ""
+
 // Doc -- struct for entering RRSchedules
 type Doc struct {
 	DateTrainID      string
@@ -58,6 +61,18 @@ func fatalExit(msg string) {
 
 }
 
+// SetLogging -- place to put logfile
+func SetLogging() {
+	f, err := os.OpenFile(LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+	log.Println("Start up")
+}
+
 // Flags -- used in routerfirebase
 func Flags() {
 
@@ -69,7 +84,13 @@ func Flags() {
 		"",
 		"directory and file of token.json\n"+
 			"   ./routefirebase -token='/stuff/token.json'")
+
+	flag.StringVar(&LogFile, "logfile",
+		"./log",
+		"log file location")
+
 	flag.Parse()
+	SetLogging()
 
 }
 
@@ -137,44 +158,6 @@ func GetAllStationsRecordsWrapper(number int) []map[string]string {
 
 	}
 	return groupOfRecords
-}
-
-func deleteCollection(ctx context.Context, client *firestore.Client,
-	ref *firestore.CollectionRef, batchSize int) error {
-
-	for {
-		// Get a batch of documents
-		iter := ref.Limit(batchSize).Documents(ctx)
-		numDeleted := 0
-
-		// Iterate through the documents, adding
-		// a delete operation for each one to a
-		// WriteBatch.
-		batch := client.Batch()
-		for {
-			doc, err := iter.Next()
-			if err == iterator.Done {
-				break
-			}
-			if err != nil {
-				return err
-			}
-
-			batch.Delete(doc.Ref)
-			numDeleted++
-		}
-
-		// If there are no documents to delete,
-		// the process is over.
-		if numDeleted == 0 {
-			return nil
-		}
-
-		_, err := batch.Commit(ctx)
-		if err != nil {
-			return err
-		}
-	}
 }
 
 // DeleteDocument -- simple document delete
@@ -252,7 +235,10 @@ func AddStation(station string) {
 // AllStationsByTime --
 func AllStationsByTime() {
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	for _, train := range records {
 		go AddStationsByTime(train.TrainNo)
@@ -273,7 +259,6 @@ func AddStationsByTime(trainNo string) error {
 	for i := range rrSchedules.RRSchedules {
 
 		m := rrSchedules.RRSchedules[i]
-
 		timeSquish, _ := DateTimeParse(
 			fmt.Sprintf("%s %s",
 				rrSchedules.DocDate,
@@ -313,22 +298,24 @@ func AddStations(trainNo string) error {
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 	fmt.Printf("%v\n", rrSchedules.RRSchedules[0].ActTM)
 
-	m := rrSchedules.RRSchedules[0]
+	for i := range rrSchedules.RRSchedules {
 
-	r := map[string]string{"Station": m.Station,
-		"ActTM": m.ActTM, "EstTM": m.EstTM,
-		"SchedTM": m.SchedTM,
-		"trainNo": trainNo}
+		m := rrSchedules.RRSchedules[i]
 
-	_, err := client.Collection("Stations").
-		Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[0].Station).
-		Doc(trainNo).Set(ctx, r, firestore.MergeAll)
+		r := map[string]string{"Station": m.Station,
+			"ActTM": m.ActTM, "EstTM": m.EstTM,
+			"SchedTM": m.SchedTM,
+			"trainNo": trainNo}
 
-	if err != nil {
-		fmt.Printf("error on insert")
-		return err
+		_, err := client.Collection("Stations").
+			Doc(rrSchedules.DocDate).Collection(rrSchedules.RRSchedules[i].Station).
+			Doc(trainNo).Set(ctx, r, firestore.MergeAll)
+
+		if err != nil {
+			fmt.Printf("error on insert")
+			return err
+		}
 	}
-
 	return nil
 }
 
@@ -338,7 +325,10 @@ func AddRRSchedules() error {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return err
+	}
 
 	for _, train := range records {
 
@@ -369,7 +359,10 @@ func RefreshLiveView() {
 	ctx, client := OpenCtxClient()
 	defer client.Close()
 
-	records := septa.GetLiveViewRecords()
+	records, err := septa.GetLiveViewRecords()
+	if err != nil {
+		return
+	}
 
 	oldRecords := AllDocuments("trainView", "TrainNo")
 	trainMap := map[string]int{}
