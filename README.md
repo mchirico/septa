@@ -3,6 +3,8 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mchirico/septa)](https://goreportcard.com/report/github.com/mchirico/septa)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0282611068630ef5e232/test_coverage)](https://codeclimate.com/github/mchirico/septa/test_coverage)
 [![codecov](https://codecov.io/gh/mchirico/septa/branch/develop/graph/badge.svg)](https://codecov.io/gh/mchirico/septa)
+
+[![Codetree](https://codetree.com/images/managed-with-codetree.svg)](https://codetree.com/projects/gDbU)
 # SEPTA
 Golang program for pulling SEPTA data
 
