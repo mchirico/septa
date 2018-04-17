@@ -5,9 +5,13 @@
 [![codecov](https://codecov.io/gh/mchirico/septa/branch/develop/graph/badge.svg)](https://codecov.io/gh/mchirico/septa)
 
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/mchirico/septa.svg?columns=all)](https://waffle.io/mchirico/septa)
+
+
+
 # SEPTA
 Golang program for pulling SEPTA data
 
+[![Throughput Graph](https://graphs.waffle.io/mchirico/septa/throughput.svg)](https://waffle.io/mchirico/septa/metrics/throughput)
 # Install
 ```bash
 
