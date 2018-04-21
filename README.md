@@ -1,3 +1,9 @@
+# SEPTA
+Golang program for pulling SEPTA data
+<a href="https://confluence.aipiggybot.io">
+<img alt="Confluence" src="https://storage.googleapis.com/montco-stats/confluence.png"  width="100px">
+</a>
+
 [![Build Status](https://travis-ci.org/mchirico/septa.svg?branch=develop)](https://travis-ci.org/mchirico/septa)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0282611068630ef5e232/maintainability)](https://codeclimate.com/github/mchirico/septa/maintainability)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mchirico/septa)](https://goreportcard.com/report/github.com/mchirico/septa)
@@ -8,8 +14,7 @@
 
 
 
-# SEPTA
-Golang program for pulling SEPTA data
+
 
 [![Throughput Graph](https://graphs.waffle.io/mchirico/septa/throughput.svg)](https://waffle.io/mchirico/septa/metrics/throughput)
 # Install
