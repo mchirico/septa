@@ -65,7 +65,7 @@ go build github.com/mchirico/septa/routefirebase
 ```
 
 
-## Map Command
+## Running Docker Map 
 
 ```bash
 # You may have a running version on p:
