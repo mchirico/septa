@@ -36,6 +36,7 @@ go get -u github.com/mchirico/septa/...
 
 ```
 
+
 ## Build
 ```bash
 # Building locally
@@ -60,6 +61,32 @@ This is the server program used to populate Firebase
 
 ```bash
 go build github.com/mchirico/septa/routefirebase
+
+```
+
+
+## Map Command
+
+```bash
+# You may have a running version on p:
+# Check this first
+ssh p
+tmux a -t 0
+
+# No running version?
+#  (Do the following from account "p"
+
+tmux
+
+docker pull us.gcr.io/mchirico/map
+
+docker run -p 7444:80 --rm -it us.gcr.io/mchirico/map /bin/bash
+
+/etc/init.d/postgresql start
+/usr/sbin/apache2ctl start
+/etc/init.d/renderd start
+
+
 
 ```
 
