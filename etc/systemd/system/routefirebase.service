@@ -1,0 +1,17 @@
+[Unit]
+Description=Route Firebase Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/docker/routefirebase
+User=routefirebase
+ExecStart=/docker/routefirebase/septa-project/wrapperScript.sh
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+

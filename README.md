@@ -1,13 +1,15 @@
 # SEPTA
 Golang program for pulling SEPTA data
 
+<a href='https://jira.aipiggybot.io/projects/SEPT/issues/'>
+<img src="https://storage.googleapis.com/montco-stats/JiraSoftware.png" alt="drawing" width="150px;"/>
+         </a>
+
+
 <a href="https://confluence.aipiggybot.io">
 <img alt="Confluence" src="https://storage.googleapis.com/montco-stats/confluence.png"  width="100px">
 </a>
 
-<a href="https://jira.aipiggybot.io/projects/SEPT/issues/SEPT-5?filter=allopenissues">
-<img alt="Confluence" src="https://storage.googleapis.com/montco-stats/jira.png"  width="22px">
-</a>
 
 
 
@@ -98,5 +100,28 @@ This is early development; but, you can test it with a docker image
 ```bash
 docker pull docker.io/mchirico/septa
 docker run --rm -it mchirico/septa septa
+
+```
+
+
+## Running Service
+
+```bash
+-- Commands --
+   go get -u github.com/mchirico/septa/...
+
+        cd septa-project/bin/
+
+   As root:
+        systemctl stop routefirebase
+        go build github.com/mchirico/septa/routefirebase
+
+   Test it (going back to non root account):
+        ./routefirebase
+ (ctl-c)
+
+   As root:
+         systemctl start routefirebase
+         systemctl status routefirebase
 
 ```
