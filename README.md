@@ -5,9 +5,10 @@ Golang program for pulling SEPTA data
 <img alt="Confluence" src="https://storage.googleapis.com/montco-stats/confluence.png"  width="100px">
 </a>
 
-<a href="https://jira.aipiggybot.io/projects/SEPT/issues/SEPT-5?filter=allopenissues">
-<img alt="Confluence" src="https://storage.googleapis.com/montco-stats/jira.png"  width="22px">
-</a>
+
+<a href='https://jira.aipiggybot.io/projects/SEPT/'>
+<img src="https://storage.googleapis.com/montco-stats/JiraSoftware.png" alt="drawing" width="150px;"/>
+         </a>
 
 
 
